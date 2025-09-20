@@ -12,12 +12,12 @@
 #----------------------------------------------------------#
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # Checking rrddir
 if [ ! -d "$RRD" ]; then
@@ -128,7 +128,7 @@ for period in $periods; do
 done
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 exit

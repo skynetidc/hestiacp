@@ -1,9 +1,9 @@
 <?php
 
-namespace Hestia\WebApp\Installers\NamelessMC;
+namespace Skynet\WebApp\Installers\NamelessMC;
 
-use Hestia\System\Util;
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
+use Skynet\System\Util;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
 
 class NamelessMCSetup extends BaseSetup {
 	protected $appInfo = [

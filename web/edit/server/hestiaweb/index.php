@@ -20,7 +20,7 @@ if (!empty($_POST["save"])) {
 		fwrite($fp, str_replace("\r\n", "\n", $_POST["v_config"]));
 		fclose($fp);
 		exec(
-			HESTIA_CMD . "v-change-sys-service-config " . $new_conf . " hestiaweb no",
+			SKYNET_CMD . "v-change-sys-service-config " . $new_conf . " skynetweb no",
 			$output,
 			$return_var,
 		);
@@ -30,11 +30,11 @@ if (!empty($_POST["save"])) {
 	}
 }
 
-$v_config_path = "/var/spool/cron/crontabs/hestiaweb";
+$v_config_path = "/var/spool/cron/crontabs/skynetweb";
 $v_service_name = _("Panel Cronjobs");
 
 // Read config
-$v_config = shell_exec(HESTIA_CMD . "v-open-fs-config " . $v_config_path);
+$v_config = shell_exec(SKYNET_CMD . "v-open-fs-config " . $v_config_path);
 
 // Render page
 render_page($user, $TAB, "edit_server_service");

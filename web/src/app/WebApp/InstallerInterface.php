@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Hestia\WebApp;
+namespace Skynet\WebApp;
 
 interface InstallerInterface {
 	public function install(array $options = null);

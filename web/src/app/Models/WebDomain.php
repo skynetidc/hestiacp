@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Hestia\Models;
+namespace Skynet\Models;
 
 class WebDomain extends Model {}

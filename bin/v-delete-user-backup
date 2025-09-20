@@ -15,14 +15,14 @@ user=$1
 backup=$2
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/backup.sh
-source $HESTIA/func/backup.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/backup.sh
+source $SKYNET/func/backup.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -35,7 +35,7 @@ is_object_valid 'user' 'USER' "$user"
 is_object_valid 'backup' 'BACKUP' "$2"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -68,7 +68,7 @@ fi
 sed -i "/BACKUP='$2' /d" "$USER_DATA/backup.conf"
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Update counter

@@ -23,14 +23,14 @@ yearly=$6
 arch=$(arch)
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 # Fetch current verison B2 CLI tool
-source_conf "$HESTIA/install/upgrade/upgrade.conf"
+source_conf "$SKYNET/install/upgrade/upgrade.conf"
 
 is_negative_one_or_int() {
 	if [[ "$1" != '-1' ]]; then
@@ -52,7 +52,7 @@ is_negative_one_or_int $monthly 'Monthly snapshots'
 is_negative_one_or_int $yearly 'Yearly snapshots'
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -65,17 +65,17 @@ fi
 # Update restic to last release
 restic self-update > /dev/null 2>&1
 
-echo "REPO='$repo'" > /usr/local/hestia/conf/restic.conf
-echo "SNAPSHOTS='$snapshots'" >> /usr/local/hestia/conf/restic.conf
-echo "KEEP_DAILY='$daily'" >> /usr/local/hestia/conf/restic.conf
-echo "KEEP_WEEKLY='$weekly'" >> /usr/local/hestia/conf/restic.conf
-echo "KEEP_MONTHLY='$monthly'" >> /usr/local/hestia/conf/restic.conf
-echo "KEEP_YEARLY='$yearly'" >> /usr/local/hestia/conf/restic.conf
+echo "REPO='$repo'" > /usr/local/skynet/conf/restic.conf
+echo "SNAPSHOTS='$snapshots'" >> /usr/local/skynet/conf/restic.conf
+echo "KEEP_DAILY='$daily'" >> /usr/local/skynet/conf/restic.conf
+echo "KEEP_WEEKLY='$weekly'" >> /usr/local/skynet/conf/restic.conf
+echo "KEEP_MONTHLY='$monthly'" >> /usr/local/skynet/conf/restic.conf
+echo "KEEP_YEARLY='$yearly'" >> /usr/local/skynet/conf/restic.conf
 
 $BIN/v-change-sys-config-value 'BACKUP_INCREMENTAL' 'yes'
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Logging

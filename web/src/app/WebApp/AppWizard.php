@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Hestia\WebApp;
+namespace Skynet\WebApp;
 
-use Hestia\System\HestiaApp;
+use Skynet\System\SkynetApp;
 
 class AppWizard {
 	private $domain;
@@ -20,7 +20,7 @@ class AppWizard {
 		"database_password" => ["type" => "password", "placeholder" => "auto"],
 	];
 
-	public function __construct(InstallerInterface $app, string $domain, HestiaApp $context) {
+	public function __construct(InstallerInterface $app, string $domain, SkynetApp $context) {
 		$this->domain = $domain;
 		$this->appcontext = $context;
 
@@ -73,7 +73,7 @@ class AppWizard {
 		]);
 
 		if ($this->appsetup->withDatabase()) {
-			exec(HESTIA_CMD . "v-list-database-hosts json", $output, $return_var);
+			exec(SKYNET_CMD . "v-list-database-hosts json", $output, $return_var);
 			$db_hosts_tmp1 = json_decode(implode("", $output), true, flags: JSON_THROW_ON_ERROR);
 			$db_hosts_tmp2 = array_map(function ($host) {
 				return $host["HOST"];

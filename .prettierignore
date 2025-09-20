@@ -30,7 +30,7 @@ web/templates/
 # Patch files
 /install/upgrade/patch/*
 
-# Hestia Nginx.conf
+# Skynet Nginx.conf
 /src/deb/nginx/nginx.conf
 /src/rpm/nginx/nginx.conf
 

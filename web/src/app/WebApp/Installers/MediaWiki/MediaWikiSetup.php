@@ -1,10 +1,10 @@
 <?php
 
-namespace Hestia\WebApp\Installers\MediaWiki;
+namespace Skynet\WebApp\Installers\MediaWiki;
 
-use Hestia\System\Util;
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use Skynet\System\Util;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 class MediaWikiSetup extends BaseSetup {
 	protected $appInfo = [

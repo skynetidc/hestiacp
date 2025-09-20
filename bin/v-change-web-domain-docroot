@@ -29,14 +29,14 @@ export php=$5
 restart=$6
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/domain.sh
-source $HESTIA/func/domain.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/domain.sh
+source $SKYNET/func/domain.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # Additional argument formatting
 format_domain
@@ -64,7 +64,7 @@ is_dir_symlink "$HOMEDIR/$user/web"
 is_dir_symlink "$HOMEDIR/$user/web/$target_domain"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -115,7 +115,7 @@ else
 fi
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Rebuild domain configuration

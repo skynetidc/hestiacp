@@ -1,8 +1,8 @@
 <?php
 
-namespace Hestia\WebApp\Installers\ThirtyBees;
+namespace Skynet\WebApp\Installers\ThirtyBees;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
 
 class ThirtyBeesSetup extends BaseSetup {
 	protected $appInfo = [

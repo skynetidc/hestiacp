@@ -4,7 +4,7 @@
 #
 # example: v-delete-database-host pgsql localhost
 #
-# This function for deleting the database host from hestia configuration. It will
+# This function for deleting the database host from skynet configuration. It will
 # be deleted if there are no databases created on it only.
 
 #----------------------------------------------------------#
@@ -16,14 +16,14 @@ type=$1
 host=$2
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/db.sh
-source $HESTIA/func/db.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/db.sh
+source $SKYNET/func/db.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -37,20 +37,20 @@ is_object_valid "../../conf/$type" 'HOST' "$host"
 is_dbhost_free
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
 #----------------------------------------------------------#
 
 # Deleting server
-sed -i "/HOST='$host' /d" "$HESTIA/conf/$type.conf"
+sed -i "/HOST='$host' /d" "$SKYNET/conf/$type.conf"
 # Delete RRD database
-rm -fr $HESTIA'/web/rrd/db/'$type'_'$host'.rrd'
-rm -fr $HESTIA'/web/rrd/db/'*-$type'_'$host'.*'
+rm -fr $SKYNET'/web/rrd/db/'$type'_'$host'.rrd'
+rm -fr $SKYNET'/web/rrd/db/'*-$type'_'$host'.*'
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Logging

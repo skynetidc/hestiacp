@@ -11,17 +11,17 @@
 #----------------------------------------------------------#
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/syshealth.sh
-source $HESTIA/func/syshealth.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/syshealth.sh
+source $SKYNET/func/syshealth.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -38,7 +38,7 @@ fi
 
 # Checking user certificates
 for user in $("$BIN/v-list-users" list); do
-	USER_DATA=$HESTIA/data/users/$user
+	USER_DATA=$SKYNET/data/users/$user
 
 	for domain in $(search_objects 'web' 'LETSENCRYPT' 'yes' 'DOMAIN'); do
 		# Clear any keys related to web domains
@@ -167,7 +167,7 @@ if [ -n "$PROXY_SYSTEM" ]; then
 fi
 
 #----------------------------------------------------------#
-#                        Hestia                            #
+#                        skynet                            #
 #----------------------------------------------------------#
 
 log_event "$OK" "$EVENT"

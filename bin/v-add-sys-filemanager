@@ -1,5 +1,5 @@
 #!/bin/bash
-# info: add file manager functionality to Hestia Control Panel
+# info: add file manager functionality to skynet Control Panel
 # options: [MODE]
 #
 # This function installs the File Manager on the server
@@ -10,19 +10,19 @@
 #----------------------------------------------------------#
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 # load config file
-source_conf "$HESTIA/install/upgrade/upgrade.conf"
+source_conf "$SKYNET/install/upgrade/upgrade.conf"
 
 MODE=$1
 user="$ROOT_USER"
 
-FM_INSTALL_DIR="$HESTIA/web/fm"
+FM_INSTALL_DIR="$SKYNET/web/fm"
 FM_FILE="filegator_latest"
 FM_URL="https://github.com/filegator/static/raw/master/builds/filegator_latest.zip"
 COMPOSER_BIN="$HOMEDIR/$user/.composer/composer"
@@ -37,12 +37,12 @@ if [ "x$(id -u)" != 'x0' ]; then
 	exit 10
 fi
 
-# Ensure that $HESTIA (/usr/local/hestia/) and other variables are valid.
-if [ -z "$HESTIA" ]; then
-	HESTIA="/usr/local/hestia"
+# Ensure that $SKYNET (/usr/local/skynet/) and other variables are valid.
+if [ -z "$SKYNET" ]; then
+	skynet="/usr/local/skynet"
 fi
 
-if [ -z "$HOMEDIR" ] || [ -z "$HESTIA_INSTALL_DIR" ]; then
+if [ -z "$HOMEDIR" ] || [ -z "$SKYNET_INSTALL_DIR" ]; then
 	echo "ERROR: Environment variables not present, installation aborted."
 	exit 2
 fi
@@ -51,19 +51,19 @@ fi
 if [ ! -f "$COMPOSER_BIN" ]; then
 	$BIN/v-add-user-composer "$user"
 	if [ $? -ne 0 ]; then
-		$BIN/v-add-user-notification "$ROOT_USER" 'Composer installation failed!' '<p class="u-text-bold">The File Manager will not work without Composer.</p><p>Please try running the installer manually from a shell session:<br><code>v-add-sys-filemanager</code></p><p>If this continues, <a href="https://github.com/hestiacp/hestiacp/issues" target="_blank">open an issue on GitHub</a>.</p>'
+		$BIN/v-add-user-notification "$ROOT_USER" 'Composer installation failed!' '<p class="u-text-bold">The File Manager will not work without Composer.</p><p>Please try running the installer manually from a shell session:<br><code>v-add-sys-filemanager</code></p><p>If this continues, <a href="https://github.com/skynetcp/skynetcp/issues" target="_blank">open an issue on GitHub</a>.</p>'
 		exit 1
 	fi
 fi
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
 #----------------------------------------------------------#
 
-openssl_installed=$(/usr/local/hestia/php/bin/php -m | grep openssl)
+openssl_installed=$(/usr/local/skynet/php/bin/php -m | grep openssl)
 
 rm --recursive --force "$FM_INSTALL_DIR"
 mkdir -p "$FM_INSTALL_DIR"
@@ -76,22 +76,22 @@ mv --force ${FM_INSTALL_DIR}/filegator/* "${FM_INSTALL_DIR}"
 rm --recursive --force ${FM_INSTALL_DIR}/${FM_FILE}
 [[ -f "${FM_INSTALL_DIR}/${FM_FILE}" ]] && rm "${FM_INSTALL_DIR}/${FM_FILE}"
 
-cp --recursive --force ${HESTIA_INSTALL_DIR}/filemanager/filegator/* "${FM_INSTALL_DIR}"
+cp --recursive --force ${skynet_INSTALL_DIR}/filemanager/filegator/* "${FM_INSTALL_DIR}"
 
 chown $user: -R "${FM_INSTALL_DIR}"
 
 if [ -z "$openssl_installed" ]; then
 	COMPOSER_HOME="$HOMEDIR/$user/.config/composer" user_exec /usr/bin/php $COMPOSER_BIN --quiet --no-dev install
 else
-	COMPOSER_HOME="$HOMEDIR/$user/.config/composer" user_exec /usr/local/hestia/php/bin/php $COMPOSER_BIN --quiet --no-dev install
+	COMPOSER_HOME="$HOMEDIR/$user/.config/composer" user_exec /usr/local/skynet/php/bin/php $COMPOSER_BIN --quiet --no-dev install
 fi
 
 # Check if installation was successful, if not abort script and throw error message notification and clean-up
 if [ $? -ne 0 ]; then
 	echo "ERROR: File Manager installation failed!"
 	echo "Please report this to our development team:"
-	echo "https://github.com/hestiacp/hestiacp/issues"
-	$BIN/v-add-user-notification "$ROOT_USER" 'File Manager installation failed!' '<p>Please <a href="https://github.com/hestiacp/hestiacp/issues" target="_blank">open an issue on GitHub</a> to report this to our development team.</p>'
+	echo "https://github.com/skynetcp/skynetcp/issues"
+	$BIN/v-add-user-notification "$ROOT_USER" 'File Manager installation failed!' '<p>Please <a href="https://github.com/skynetcp/skynetcp/issues" target="_blank">open an issue on GitHub</a> to report this to our development team.</p>'
 	# Installation failed, clean up files
 	rm --recursive --force ${FM_INSTALL_DIR}
 	$BIN/v-change-sys-config-value 'FILE_MANAGER' 'false'
@@ -100,10 +100,10 @@ if [ $? -ne 0 ]; then
 fi
 
 # Add configuration file
-cp -f $HESTIA_INSTALL_DIR/filemanager/filegator/configuration.php $HESTIA/web/fm/configuration.php
+cp -f $SKYNET_INSTALL_DIR/filemanager/filegator/configuration.php $SKYNET/web/fm/configuration.php
 
 # Path to the file manager configuration file where the change will be made.
-config_file="$HESTIA/web/fm/configuration.php"
+config_file="$SKYNET/web/fm/configuration.php"
 app_name="File Manager - $APP_NAME"
 
 # Sed replaces only the value after "File Manager -"
@@ -112,9 +112,9 @@ sed -i "s|\(\$dist_config\[\"frontend_config\"\]\[\"app_name\"\] = \"File Manage
 echo "$fm_v" > "${FM_INSTALL_DIR}/version"
 # Set permissions
 chown root: -R "${FM_INSTALL_DIR}"
-chown hestiaweb: "${FM_INSTALL_DIR}/private"
-chown hestiaweb: "${FM_INSTALL_DIR}/private/logs"
-chown hestiaweb: "${FM_INSTALL_DIR}/repository"
+chown skynetweb: "${FM_INSTALL_DIR}/private"
+chown skynetweb: "${FM_INSTALL_DIR}/private/logs"
+chown skynetweb: "${FM_INSTALL_DIR}/repository"
 
 $BIN/v-change-sys-config-value 'FILE_MANAGER' 'true'
 

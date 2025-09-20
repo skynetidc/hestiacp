@@ -16,18 +16,18 @@ user=$1
 restart=$2
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/domain.sh
-source $HESTIA/func/domain.sh
-# shellcheck source=/usr/local/hestia/func/db.sh
-source $HESTIA/func/db.sh
-# shellcheck source=/usr/local/hestia/func/ip.sh
-source $HESTIA/func/ip.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/domain.sh
+source $SKYNET/func/domain.sh
+# shellcheck source=/usr/local/skynet/func/db.sh
+source $SKYNET/func/db.sh
+# shellcheck source=/usr/local/skynet/func/ip.sh
+source $SKYNET/func/ip.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -41,7 +41,7 @@ if [ "$user" = "$ROOT_USER" ]; then
 fi
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -83,8 +83,8 @@ $BIN/v-delete-user-ips "$user"
 check_result "$?" "user ip release failed"
 
 # Deleteing user pipes
-sed -i "/ $user$/d" "$HESTIA/data/queue/disk.pipe"
-sed -i "/ $user$/d" "$HESTIA/data/queue/traffic.pipe"
+sed -i "/ $user$/d" "$SKYNET/data/queue/disk.pipe"
+sed -i "/ $user$/d" "$SKYNET/data/queue/traffic.pipe"
 
 # Deleting sftp jail
 $BIN/v-delete-user-sftp-jail "$user"
@@ -115,7 +115,7 @@ if [ "$user" != "$ROOT_USER" ]; then
 fi
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Logging

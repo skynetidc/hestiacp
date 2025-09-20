@@ -2,8 +2,8 @@
 # info: Install update from Git repository
 # options: REPOSITORY BRANCH INSTALL
 #
-# example: v-update-sys-hestia-git hestiacp staging/beta install
-#          # Will download from the hestiacp repository
+# example: v-update-sys-skynet-git skynetcp staging/beta install
+#          # Will download from the skynetcp repository
 #          # Pulls code from staging/beta branch
 #          # install: installs package immediately
 #          # install-auto: installs package and schedules automatic updates from Git
@@ -14,15 +14,15 @@
 #                Variables & Functions                     #
 #----------------------------------------------------------#
 
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 # Detect and install Node.js if necessary
 if [ -z $(which "node") ]; then
@@ -74,7 +74,7 @@ download_file() {
 	fi
 
 	if [ ! -f "$ARCHIVE_DIR/$filename" ]; then
-		[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: wget $url -q $dstopt --show-progress --progress=bar:force --limit-rate=3m
+		[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: wget $url -q $dstopt --show-progress --progress=bar:force --limit-rate=3m
 		wget $url -q $dstopt --show-progress --progress=bar:force --limit-rate=3m
 		if [ $? -ne 0 ]; then
 			echo >&2 "[!] Archive $ARCHIVE_DIR/$filename is corrupted and exit script"
@@ -95,13 +95,13 @@ download_file() {
 get_branch_file() {
 	local filename=$1
 	local destination=$2
-	[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: Get branch file "$filename" to "$destination"
+	[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: Get branch file "$filename" to "$destination"
 	if [ "$use_src_folder" == 'true' ]; then
 		if [ -z "$destination" ]; then
-			[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" ./
+			[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" ./
 			cp -f "$SRC_DIR/$filename" ./
 		else
-			[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" "$destination"
+			[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" "$destination"
 			cp -f "$SRC_DIR/$filename" "$destination"
 		fi
 	else
@@ -110,10 +110,10 @@ get_branch_file() {
 }
 
 # Set compiling directory
-BUILD_DIR='/tmp/hestiacp-src'
-INSTALL_DIR='/tmp/hestia-src'
+BUILD_DIR='/tmp/skynetcp-src'
+INSTALL_DIR='/tmp/skynet-src'
 SRC_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-ARCHIVE_DIR="/tmp/hestia-src/archive/"
+ARCHIVE_DIR="/tmp/skynet-src/archive/"
 architecture="$(arch)"
 if [ $architecture == 'aarch64' ]; then
 	BUILD_ARCH='arm64'
@@ -145,8 +145,8 @@ if [ -z "$branch" ]; then
 fi
 
 # Set Version for compiling
-BUILD_VER=$(curl -s https://raw.githubusercontent.com/$fork/hestiacp/$branch/src/deb/hestia/control | grep "Version:" | cut -d' ' -f2)
-HESTIA_V="${BUILD_VER}_${BUILD_ARCH}"
+BUILD_VER=$(curl -s https://raw.githubusercontent.com/$fork/skynetcp/$branch/src/deb/skynet/control | grep "Version:" | cut -d' ' -f2)
+skynet_V="${BUILD_VER}_${BUILD_ARCH}"
 
 # Create build directories
 rm -rf $BUILD_DIR
@@ -198,7 +198,7 @@ install_build() {
 
 # Set install flags
 if [ -n "$fork" ]; then
-	fork_check=$(curl -s --head -w %{http_code} https://raw.githubusercontent.com/$fork/hestiacp/main/src/deb/hestia/control -o /dev/null)
+	fork_check=$(curl -s --head -w %{http_code} https://raw.githubusercontent.com/$fork/skynetcp/main/src/deb/skynet/control -o /dev/null)
 	if [ "$fork_check" -ne "200" ]; then
 		echo "ERROR: invalid repository name specified."
 		exit 1
@@ -206,12 +206,12 @@ if [ -n "$fork" ]; then
 		echo "[!] Download code from GitHub repository: $fork"
 	fi
 else
-	fork="hestiacp"
+	fork="skynetcp"
 fi
 
 if [ -n "$branch" ]; then
-	echo https://raw.githubusercontent.com/$fork/hestiacp/$branch/src/deb/hestia/control
-	branch_check=$(curl -s --head -w %{http_code} https://raw.githubusercontent.com/$fork/hestiacp/$branch/src/deb/hestia/control -o /dev/null)
+	echo https://raw.githubusercontent.com/$fork/skynetcp/$branch/src/deb/skynet/control
+	branch_check=$(curl -s --head -w %{http_code} https://raw.githubusercontent.com/$fork/skynetcp/$branch/src/deb/skynet/control -o /dev/null)
 	if [ $branch_check -ne "200" ]; then
 		echo "ERROR: invalid branch name specified."
 		exit 1
@@ -220,9 +220,9 @@ if [ -n "$branch" ]; then
 		echo "[!] Changed system release branch to: $branch."
 	fi
 else
-	source /usr/local/hestia/conf/hestia.conf
+	source /usr/local/skynet/conf/skynet.conf
 	branch=$RELEASE_BRANCH
-	branch_check=$(curl -s --head -w %{http_code} https://raw.githubusercontent.com/$fork/hestiacp/$branch/src/deb/hestia/control -o /dev/null)
+	branch_check=$(curl -s --head -w %{http_code} https://raw.githubusercontent.com/$fork/skynetcp/$branch/src/deb/skynet/control -o /dev/null)
 	if [ "$branch_check" -ne "200" ]; then
 		echo "ERROR: invalid branch name specified."
 		exit 1
@@ -233,7 +233,7 @@ if [ -z "$branch" ]; then
 	echo "ERROR: No branch detected."
 	exit
 fi
-REPO="$fork/hestiacp"
+REPO="$fork/skynetcp"
 # Forward slashes in branchname are replaced with dashes to match foldername in github archive.
 branch_dash=$(echo "$branch" | sed 's/\//-/g')
 
@@ -275,101 +275,101 @@ fi
 GIT_REP='https://raw.githubusercontent.com/'$REPO'/'$branch'/src/deb'
 
 # Generate Links for sourcecode
-HESTIA_ARCHIVE_LINK='https://github.com/'$REPO'/archive/'$branch'.tar.gz'
-echo $HESTIA_ARCHIVE_LINK
+skynet_ARCHIVE_LINK='https://github.com/'$REPO'/archive/'$branch'.tar.gz'
+echo $SKYNET_ARCHIVE_LINK
 
-echo "Building Hestia Control Panel package..."
+echo "Building skynet Control Panel package..."
 
-BUILD_DIR_HESTIA=$BUILD_DIR/hestia_$HESTIA_V
+BUILD_DIR_skynet=$BUILD_DIR/skynet_$SKYNET_V
 
 # Change to build directory
 cd $BUILD_DIR
 
-if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_HESTIA" ]; then
+if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_skynet" ]; then
 	# Check if target directory exist
-	if [ -d $BUILD_DIR_HESTIA ]; then
-		rm -r $BUILD_DIR_HESTIA
+	if [ -d $BUILD_DIR_skynet ]; then
+		rm -r $BUILD_DIR_skynet
 	fi
 
 	# Create directory
-	mkdir -p $BUILD_DIR_HESTIA
+	mkdir -p $BUILD_DIR_skynet
 fi
 
 cd $BUILD_DIR
-rm -rf $BUILD_DIR/hestiacp-$branch_dash
+rm -rf $BUILD_DIR/skynetcp-$branch_dash
 # Download and unpack source files
 if [ "$use_src_folder" == 'true' ]; then
-	[ "$HESTIA_DEBUG" ] && echo DEBUG: cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
-	cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
+	[ "$SKYNET_DEBUG" ] && echo DEBUG: cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
+	cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
 elif [ -d $SRC_DIR ]; then
-	download_file $HESTIA_ARCHIVE_LINK '-' 'fresh' | tar xz
+	download_file $SKYNET_ARCHIVE_LINK '-' 'fresh' | tar xz
 fi
 
-mkdir -p $BUILD_DIR_HESTIA/usr/local/hestia
+mkdir -p $BUILD_DIR_skynet/usr/local/skynet
 
 # Move needed directories
-cd $BUILD_DIR/hestiacp-$branch_dash
+cd $BUILD_DIR/skynetcp-$branch_dash
 
 npm ci
 npm run build
 
-cp -rf bin func install web $BUILD_DIR_HESTIA/usr/local/hestia/
+cp -rf bin func install web $BUILD_DIR_skynet/usr/local/skynet/
 
 # Set permissions
-find $BUILD_DIR_HESTIA/usr/local/hestia/ -type f -exec chmod -x {} \;
+find $BUILD_DIR_skynet/usr/local/skynet/ -type f -exec chmod -x {} \;
 
-# Allow send email via /usr/local/hestia/web/inc/mail-wrapper.php via cli
-chmod +x $BUILD_DIR_HESTIA/usr/local/hestia/web/inc/mail-wrapper.php
+# Allow send email via /usr/local/skynet/web/inc/mail-wrapper.php via cli
+chmod +x $BUILD_DIR_skynet/usr/local/skynet/web/inc/mail-wrapper.php
 # Allow the executable to be executed
-chmod +x $BUILD_DIR_HESTIA/usr/local/hestia/bin/*
-find $BUILD_DIR_HESTIA/usr/local/hestia/install/ \( -name '*.sh' \) -exec chmod +x {} \;
-chmod -x $BUILD_DIR_HESTIA/usr/local/hestia/install/*.sh
-chown -R root:root $BUILD_DIR_HESTIA
+chmod +x $BUILD_DIR_skynet/usr/local/skynet/bin/*
+find $BUILD_DIR_skynet/usr/local/skynet/install/ \( -name '*.sh' \) -exec chmod +x {} \;
+chmod -x $BUILD_DIR_skynet/usr/local/skynet/install/*.sh
+chown -R root:root $BUILD_DIR_skynet
 
 if [ "$BUILD_DEB" = true ]; then
 	# Get Debian package files
-	mkdir -p $BUILD_DIR_HESTIA/DEBIAN
-	get_branch_file 'src/deb/hestia/control' "$BUILD_DIR_HESTIA/DEBIAN/control"
+	mkdir -p $BUILD_DIR_skynet/DEBIAN
+	get_branch_file 'src/deb/skynet/control' "$BUILD_DIR_skynet/DEBIAN/control"
 	if [ "$BUILD_ARCH" != "amd64" ]; then
-		sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_HESTIA/DEBIAN/control"
+		sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_skynet/DEBIAN/control"
 	fi
-	get_branch_file 'src/deb/hestia/copyright' "$BUILD_DIR_HESTIA/DEBIAN/copyright"
-	get_branch_file 'src/deb/hestia/preinst' "$BUILD_DIR_HESTIA/DEBIAN/preinst"
-	get_branch_file 'src/deb/hestia/postinst' "$BUILD_DIR_HESTIA/DEBIAN/postinst"
-	chmod +x $BUILD_DIR_HESTIA/DEBIAN/postinst
-	chmod +x $BUILD_DIR_HESTIA/DEBIAN/preinst
+	get_branch_file 'src/deb/skynet/copyright' "$BUILD_DIR_skynet/DEBIAN/copyright"
+	get_branch_file 'src/deb/skynet/preinst' "$BUILD_DIR_skynet/DEBIAN/preinst"
+	get_branch_file 'src/deb/skynet/postinst' "$BUILD_DIR_skynet/DEBIAN/postinst"
+	chmod +x $BUILD_DIR_skynet/DEBIAN/postinst
+	chmod +x $BUILD_DIR_skynet/DEBIAN/preinst
 
-	echo Building Hestia DEB
-	dpkg-deb -Zxz --build $BUILD_DIR_HESTIA $DEB_DIR
+	echo Building skynet DEB
+	dpkg-deb -Zxz --build $BUILD_DIR_skynet $DEB_DIR
 fi
 
 if [ "$BUILD_RPM" = true ]; then
 	# Get RHEL package files
-	get_branch_file 'src/rpm/hestia/hestia.spec' "${BUILD_DIR_HESTIA}/hestia.spec"
-	sed -i "s/%HESTIA-VERSION%/${HESTIA_V}/g" "${BUILD_DIR_HESTIA}/hestia.spec"
-	get_branch_file 'src/rpm/hestia/hestia.service' "${BUILD_DIR_HESTIA}/hestia.service"
+	get_branch_file 'src/rpm/skynet/skynet.spec' "${BUILD_DIR_skynet}/skynet.spec"
+	sed -i "s/%skynet-VERSION%/${skynet_V}/g" "${BUILD_DIR_skynet}/skynet.spec"
+	get_branch_file 'src/rpm/skynet/skynet.service' "${BUILD_DIR_skynet}/skynet.service"
 
 	# Build RPM package
 	mkdir -p $BUILD_DIR/rpmbuild
-	echo Building Hestia RPM
-	rpmbuild -bb --define "sourcedir $BUILD_DIR_HESTIA" --buildroot=$BUILD_DIR/rpmbuild/ ${BUILD_DIR_HESTIA}/hestia.spec > ${BUILD_DIR_HESTIA}.rpm.log
-	cp ~/rpmbuild/RPMS/$(arch)/hestia-*.rpm $RPM_DIR
-	rm ~/rpmbuild/RPMS/$(arch)/hestia-*.rpm
+	echo Building skynet RPM
+	rpmbuild -bb --define "sourcedir $BUILD_DIR_skynet" --buildroot=$BUILD_DIR/rpmbuild/ ${BUILD_DIR_skynet}/skynet.spec > ${BUILD_DIR_skynet}.rpm.log
+	cp ~/rpmbuild/RPMS/$(arch)/skynet-*.rpm $RPM_DIR
+	rm ~/rpmbuild/RPMS/$(arch)/skynet-*.rpm
 	rm -rf $BUILD_DIR/rpmbuild
 fi
 
 # clear up the source folder
 if [ "$KEEPBUILD" != 'true' ]; then
-	rm -r $BUILD_DIR_HESTIA
-	rm -rf hestiacp-$branch_dash
+	rm -r $BUILD_DIR_skynet
+	rm -rf skynetcp-$branch_dash
 fi
-cd $BUILD_DIR/hestiacp-$branch_dash
+cd $BUILD_DIR/skynetcp-$branch_dash
 
 # Installation steps
 if [ "$install" = "install" ] || [ "$install" = "yes" ] || [ "$install" = "install-auto" ]; then
 	install_build
 	if [ "$install" = "install-auto" ]; then
-		$BIN/v-add-cron-hestia-autoupdate git
+		$BIN/v-add-cron-skynet-autoupdate git
 	fi
 else
 	warning_message

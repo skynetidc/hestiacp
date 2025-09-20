@@ -1,37 +1,37 @@
 #!/bin/bash
-# info: update all hestia packages
+# info: update all skynet packages
 # options: NONE
 #
-# example: v-update-sys-hestia-all
+# example: v-update-sys-skynet-all
 #
-# This function of updating all hestia packages
+# This function of updating all skynet packages
 
 #----------------------------------------------------------#
 #                Variables & Functions                     #
 #----------------------------------------------------------#
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
 #----------------------------------------------------------#
 
 # Starting update loop
-for package in hestia hestia-nginx hestia-php; do
-	$BIN/v-update-sys-hestia "$package"
+for package in skynet skynet-nginx skynet-php; do
+	$BIN/v-update-sys-skynet "$package"
 done
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 exit

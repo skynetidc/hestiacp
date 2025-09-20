@@ -22,20 +22,20 @@ udir=${8-yes}
 notify=${9-no}
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/domain.sh
-source $HESTIA/func/domain.sh
-# shellcheck source=/usr/local/hestia/func/ip.sh
-source $HESTIA/func/ip.sh
-# shellcheck source=/usr/local/hestia/func/rebuild.sh
-source $HESTIA/func/rebuild.sh
-# shellcheck source=/usr/local/hestia/func/syshealth.sh
-source $HESTIA/func/syshealth.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/domain.sh
+source $SKYNET/func/domain.sh
+# shellcheck source=/usr/local/skynet/func/ip.sh
+source $SKYNET/func/ip.sh
+# shellcheck source=/usr/local/skynet/func/rebuild.sh
+source $SKYNET/func/rebuild.sh
+# shellcheck source=/usr/local/skynet/func/syshealth.sh
+source $SKYNET/func/syshealth.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -46,7 +46,7 @@ check_args '3' "$#" "$args_usage"
 is_format_valid 'user'
 is_object_valid 'user' 'USER' "$user"
 
-source_conf $HESTIA/conf/restic.conf
+source_conf $SKYNET/conf/restic.conf
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -91,7 +91,7 @@ fi
 rebuild_user_conf
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 rm -fr "$tmpdir"
@@ -101,7 +101,7 @@ $BIN/v-update-user-counters $user
 $BIN/v-update-user-counters admin
 $BIN/v-update-sys-ip-counters
 
-sed -i "/v-restore-user-restic '$user' '$snapshot' /d" $HESTIA/data/queue/backup.pipe
+sed -i "/v-restore-user-restic '$user' '$snapshot' /d" $SKYNET/data/queue/backup.pipe
 
 # Logging
 $BIN/v-log-action "system" "Info" "Backup" "Mail domain successfully restored (User: $user, Snapshot: $snapshot, Databse: $database)."

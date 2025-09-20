@@ -14,12 +14,12 @@
 domain=$1
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -29,7 +29,7 @@ check_args '1' "$#" 'HOSTNAME'
 is_format_valid 'domain'
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -59,13 +59,13 @@ fi
 
 # Update webmail's password plugin configuration
 if [ -d /etc/roundcube/ ]; then
-	sed -i "/password_hestia_host/c\$rcmail_config['password_hestia_host'] = '$domain';" /etc/roundcube/plugins/password/config.inc.php
+	sed -i "/password_skynet_host/c\$rcmail_config['password_skynet_host'] = '$domain';" /etc/roundcube/plugins/password/config.inc.php
 fi
 if [ -d /etc/rainloop/ ]; then
-	sed -i "/hestia_host/c\hestia_host = \"$domain\"" /etc/rainloop/data/_data_/_default_/configs/plugin-hestia-change-password.ini
+	sed -i "/skynet_host/c\skynet_host = \"$domain\"" /etc/rainloop/data/_data_/_default_/configs/plugin-skynet-change-password.ini
 fi
 if [ -d /etc/snappymail/ ]; then
-	sed -i "/\"hestia_host\":/c\\\"hestia_host\": \"$domain\"," /etc/snappymail/data/_data_/_default_/configs/plugin-change-password.json
+	sed -i "/\"skynet_host\":/c\\\"skynet_host\": \"$domain\"," /etc/snappymail/data/_data_/_default_/configs/plugin-change-password.json
 fi
 
 # Update /etc/hosts
@@ -92,7 +92,7 @@ if [ -f /etc/hosts ]; then
 fi
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Logging

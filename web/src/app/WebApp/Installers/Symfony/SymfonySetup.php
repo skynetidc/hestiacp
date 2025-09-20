@@ -1,8 +1,8 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Symfony;
+namespace Skynet\WebApp\Installers\Symfony;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
 
 class SymfonySetup extends BaseSetup {
 	protected $appInfo = [

@@ -28,14 +28,14 @@ charset=${7-UTF8MB4}
 charset=$(echo "$charset" | tr '[:lower:]' '[:upper:]')
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/db.sh
-source $HESTIA/func/db.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/db.sh
+source $SKYNET/func/db.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 if [ "$type" = "pgsql" ]; then
 	database=$(echo "$user"_"$2" | tr '[:upper:]' '[:lower:]')
@@ -74,7 +74,7 @@ fi
 dbpass="$password"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
@@ -87,7 +87,7 @@ case $type in
 esac
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Generating timestamp

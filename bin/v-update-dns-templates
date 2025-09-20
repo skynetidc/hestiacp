@@ -4,7 +4,7 @@
 #
 # example: v-update-dns-templates
 #
-# This function for obtaining updated dns templates from Hestia package.
+# This function for obtaining updated dns templates from Skynet package.
 
 #----------------------------------------------------------#
 #                Variables & Functions                     #
@@ -14,15 +14,15 @@
 restart=$1
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -35,10 +35,10 @@ is_format_valid 'restart'
 #----------------------------------------------------------#
 
 # Update templates
-cp -rf $HESTIA_COMMON_DIR/templates/dns $HESTIA/data/templates/
+cp -rf $SKYNET_COMMON_DIR/templates/dns $SKYNET/data/templates/
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 $BIN/v-log-action "system" "Info" "Updates" "Default DNS zone templates updated."

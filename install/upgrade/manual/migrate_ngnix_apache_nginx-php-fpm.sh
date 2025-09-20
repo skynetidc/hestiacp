@@ -8,12 +8,12 @@
 #----------------------------------------------------------#
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/conf/hestia.conf
-source $HESTIA/conf/hestia.conf
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/conf/skynet.conf
+source $SKYNET/conf/skynet.conf
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -34,31 +34,31 @@ fi
 #----------------------------------------------------------#
 
 # Remove apache2 from config
-sed -i "/^WEB_PORT/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
-sed -i "/^WEB_SSL/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
-sed -i "/^WEB_SSL_PORT/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
-sed -i "/^WEB_RGROUPS/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
-sed -i "/^WEB_SYSTEM/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
+sed -i "/^WEB_PORT/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
+sed -i "/^WEB_SSL/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
+sed -i "/^WEB_SSL_PORT/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
+sed -i "/^WEB_RGROUPS/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
+sed -i "/^WEB_SYSTEM/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
 
 # Remove nginx (proxy) from config
-sed -i "/^PROXY_PORT/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
-sed -i "/^PROXY_SSL_PORT/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
-sed -i "/^PROXY_SYSTEM/d" $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
+sed -i "/^PROXY_PORT/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
+sed -i "/^PROXY_SSL_PORT/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
+sed -i "/^PROXY_SYSTEM/d" $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
 
 # Add Nginx settings to config
-echo "WEB_PORT='80'" >> $HESTIA/conf/hestia.conf
-echo "WEB_SSL='openssl'" >> $HESTIA/conf/hestia.conf
-echo "WEB_SSL_PORT='443'" >> $HESTIA/conf/hestia.conf
-echo "WEB_SYSTEM='nginx'" >> $HESTIA/conf/hestia.conf
+echo "WEB_PORT='80'" >> $SKYNET/conf/skynet.conf
+echo "WEB_SSL='openssl'" >> $SKYNET/conf/skynet.conf
+echo "WEB_SSL_PORT='443'" >> $SKYNET/conf/skynet.conf
+echo "WEB_SYSTEM='nginx'" >> $SKYNET/conf/skynet.conf
 
 # Add Nginx settings to config
-echo "WEB_PORT='80'" >> $HESTIA/conf/defaults/hestia.conf
-echo "WEB_SSL='openssl'" >> $HESTIA/conf/defaults/hestia.conf
-echo "WEB_SSL_PORT='443'" >> $HESTIA/conf/defaults/hestia.conf
-echo "WEB_SYSTEM='nginx'" >> $HESTIA/conf/defaults/hestia.conf
+echo "WEB_PORT='80'" >> $SKYNET/conf/defaults/skynet.conf
+echo "WEB_SSL='openssl'" >> $SKYNET/conf/defaults/skynet.conf
+echo "WEB_SSL_PORT='443'" >> $SKYNET/conf/defaults/skynet.conf
+echo "WEB_SYSTEM='nginx'" >> $SKYNET/conf/defaults/skynet.conf
 
-rm $HESTIA/conf/defaults/hestia.conf
-cp $HESTIA/conf/hestia.conf $HESTIA/conf/defaults/hestia.conf
+rm $SKYNET/conf/defaults/skynet.conf
+cp $SKYNET/conf/skynet.conf $SKYNET/conf/defaults/skynet.conf
 
 # Rebuild web config
 

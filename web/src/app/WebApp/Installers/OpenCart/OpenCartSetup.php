@@ -1,9 +1,9 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Opencart;
+namespace Skynet\WebApp\Installers\Opencart;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 class OpenCartSetup extends BaseSetup {
 	protected $appInfo = [

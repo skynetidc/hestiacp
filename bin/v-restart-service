@@ -15,11 +15,11 @@ service=$1
 restart=$2
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-source_conf "$HESTIA/conf/hestia.conf"
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -35,7 +35,7 @@ is_format_valid 'service' 'restart'
 log="/dev/null"
 if [ "$DEBUG_MODE" = "true" ]; then
 
-	log="/var/log/hestia/debug.log"
+	log="/var/log/skynet/debug.log"
 fi
 
 # Multi-instance service restart request handling
@@ -96,7 +96,7 @@ for service in $service_list; do
 done
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Logging

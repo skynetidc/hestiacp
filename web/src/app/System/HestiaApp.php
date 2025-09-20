@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Hestia\System;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+namespace Skynet\System;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
-class HestiaApp {
+class SkynetApp {
 	/** @var string[] */
 	public $errors;
-	protected const TMPDIR_DOWNLOADS = "/tmp/hestia-webapp";
+	protected const TMPDIR_DOWNLOADS = "/tmp/skynet-webapp";
 	protected $phpsupport = false;
 
 	public function __construct() {
@@ -52,7 +52,7 @@ class HestiaApp {
 		$install_folder = $this->getUserHomeDir() . DIRECTORY_SEPARATOR . ".composer";
 
 		if (!file_exists($install_folder)) {
-			exec(HESTIA_CMD . "v-rebuild-user " . $this->user(), $output, $return_code);
+			exec(SKYNET_CMD . "v-rebuild-user " . $this->user(), $output, $return_code);
 			if ($return_code !== 0) {
 				throw new \Exception("Unable to rebuild user");
 			}
@@ -331,9 +331,9 @@ class HestiaApp {
 	}
 
 	private function run(string $cmd, $args, &$cmd_result = null): bool {
-		$cli_script = realpath(HESTIA_DIR_BIN . $cmd);
-		if (!str_starts_with((string) $cli_script, HESTIA_DIR_BIN)) {
-			$errstr = "$cmd is trying to traverse outside of " . HESTIA_DIR_BIN;
+		$cli_script = realpath(skynet_DIR_BIN . $cmd);
+		if (!str_starts_with((string) $cli_script, skynet_DIR_BIN)) {
+			$errstr = "$cmd is trying to traverse outside of " . skynet_DIR_BIN;
 			trigger_error($errstr);
 			throw new \Exception($errstr);
 		}

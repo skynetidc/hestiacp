@@ -1,4 +1,4 @@
-/usr/local/hestia/log/*.log {
+/usr/local/skynet/log/*.log {
     rotate 12
     monthly
     missingok

@@ -47,8 +47,8 @@
 
 ## Community
 
-- [Hestia Nginx Cache](/docs/community/hestia-nginx-cache)
-- [Ioncube installer for Hestia](/docs/community/ioncube-hestia-installer)
+- [skynet Nginx Cache](/docs/community/skynet-nginx-cache)
+- [Ioncube installer for skynet](/docs/community/ioncube-skynet-installer)
 - [Install script generator](/docs/community/install-script-generator)
 
 ## Reference

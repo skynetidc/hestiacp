@@ -1,9 +1,9 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Nextcloud;
+namespace Skynet\WebApp\Installers\Nextcloud;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 class NextcloudSetup extends BaseSetup {
 	protected $appInfo = [

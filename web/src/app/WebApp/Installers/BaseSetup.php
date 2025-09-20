@@ -1,14 +1,14 @@
 <?php
 
-namespace Hestia\WebApp\Installers;
+namespace Skynet\WebApp\Installers;
 
-use Hestia\System\Util;
-use Hestia\System\HestiaApp;
-use Hestia\WebApp\InstallerInterface;
-use Hestia\Models\WebDomain;
+use Skynet\System\Util;
+use Skynet\System\SkynetApp;
+use Skynet\WebApp\InstallerInterface;
+use Skynet\Models\WebDomain;
 
-use Hestia\WebApp\Installers\Resources\ComposerResource;
-use Hestia\WebApp\Installers\Resources\WpResource;
+use Skynet\WebApp\Installers\Resources\ComposerResource;
+use Skynet\WebApp\Installers\Resources\WpResource;
 
 abstract class BaseSetup implements InstallerInterface {
 	protected $appInfo;
@@ -57,7 +57,7 @@ abstract class BaseSetup implements InstallerInterface {
 		}
 		return $this->appInfo;
 	}
-	public function __construct($domain, HestiaApp $appcontext) {
+	public function __construct($domain, SkynetApp $appcontext) {
 		if (filter_var($domain, FILTER_VALIDATE_DOMAIN) === false) {
 			throw new \Exception("Invalid domain name");
 		}

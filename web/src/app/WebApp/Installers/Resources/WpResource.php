@@ -1,14 +1,14 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Resources;
+namespace Skynet\WebApp\Installers\Resources;
 
-use Hestia\System\HestiaApp;
+use Skynet\System\SkynetApp;
 
 class WpResource {
 	private $appcontext;
 	private $options;
 
-	public function __construct(HestiaApp $appcontext, $data, $destination, $options, $appinfo) {
+	public function __construct(SkynetApp $appcontext, $data, $destination, $options, $appinfo) {
 		$this->appcontext = $appcontext;
 		$this->appcontext->runWp(
 			[

@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-if [ "${PATH#*/usr/local/hestia/bin*}" = "$PATH" ]; then
-    . /etc/profile.d/hestia.sh
+if [ "${PATH#*/usr/local/skynet/bin*}" = "$PATH" ]; then
+    . /etc/profile.d/skynet.sh
 fi
 
 load 'test_helper/bats-support/load'
@@ -16,27 +16,27 @@ function random() {
 function setup() {
     # echo "# Setup_file" > &3
     if [ $BATS_TEST_NUMBER = 1 ]; then
-        echo 'user=test-5285' > /tmp/hestia-test-env.sh
-        echo 'user2=test-5286' >> /tmp/hestia-test-env.sh
-        echo 'userbk=testbk-5285' >> /tmp/hestia-test-env.sh
-        echo 'userpass1=test-5285' >> /tmp/hestia-test-env.sh
-        echo 'userpass2=t3st-p4ssw0rd' >> /tmp/hestia-test-env.sh
-        echo 'HESTIA=/usr/local/hestia' >> /tmp/hestia-test-env.sh
-        echo 'domain=test-5285.hestiacp.com' >> /tmp/hestia-test-env.sh
-        echo 'domainuk=test-5285.hestiacp.com.uk' >> /tmp/hestia-test-env.sh
-        echo 'rootdomain=testhestiacp.com' >> /tmp/hestia-test-env.sh
-        echo 'subdomain=cdn.testhestiacp.com' >> /tmp/hestia-test-env.sh
-        echo 'database=test-5285_database' >> /tmp/hestia-test-env.sh
-        echo 'dbuser=test-5285_dbuser' >> /tmp/hestia-test-env.sh
-        echo 'pguser=test5290' >> /tmp/hestia-test-env.sh
-        echo 'pgdatabase=test5290_database' >> /tmp/hestia-test-env.sh
-        echo 'pgdbuser=test5290_dbuser' >> /tmp/hestia-test-env.sh
+        echo 'user=test-5285' > /tmp/skynet-test-env.sh
+        echo 'user2=test-5286' >> /tmp/skynet-test-env.sh
+        echo 'userbk=testbk-5285' >> /tmp/skynet-test-env.sh
+        echo 'userpass1=test-5285' >> /tmp/skynet-test-env.sh
+        echo 'userpass2=t3st-p4ssw0rd' >> /tmp/skynet-test-env.sh
+        echo 'skynet=/usr/local/skynet' >> /tmp/skynet-test-env.sh
+        echo 'domain=test-5285.skynetcp.com' >> /tmp/skynet-test-env.sh
+        echo 'domainuk=test-5285.skynetcp.com.uk' >> /tmp/skynet-test-env.sh
+        echo 'rootdomain=testskynetcp.com' >> /tmp/skynet-test-env.sh
+        echo 'subdomain=cdn.testskynetcp.com' >> /tmp/skynet-test-env.sh
+        echo 'database=test-5285_database' >> /tmp/skynet-test-env.sh
+        echo 'dbuser=test-5285_dbuser' >> /tmp/skynet-test-env.sh
+        echo 'pguser=test5290' >> /tmp/skynet-test-env.sh
+        echo 'pgdatabase=test5290_database' >> /tmp/skynet-test-env.sh
+        echo 'pgdbuser=test5290_dbuser' >> /tmp/skynet-test-env.sh
     fi
 
-    source /tmp/hestia-test-env.sh
-    source $HESTIA/func/main.sh
-    source $HESTIA/conf/hestia.conf
-    source $HESTIA/func/ip.sh
+    source /tmp/skynet-test-env.sh
+    source $SKYNET/func/main.sh
+    source $SKYNET/conf/skynet.conf
+    source $SKYNET/func/ip.sh
 }
 
 function validate_web_domain() {
@@ -49,12 +49,12 @@ function validate_web_domain() {
     refute [ -z "$domain" ]
     refute [ -z "$webproof" ]
 
-    source $HESTIA/func/ip.sh
+    source $SKYNET/func/ip.sh
 
     run v-list-web-domain $user $domain
     assert_success
 
-    USER_DATA=$HESTIA/data/users/$user
+    USER_DATA=$SKYNET/data/users/$user
     local domain_ip=$(get_object_value 'web' 'DOMAIN' "$domain" '$IP')
     SSL=$(get_object_value 'web' 'DOMAIN' "$domain" '$SSL')
     domain_ip=$(get_real_ip "$domain_ip")
@@ -95,12 +95,12 @@ function validate_headers_domain() {
   refute [ -z "$domain" ]
   refute [ -z "$webproof" ]
 
-  source $HESTIA/func/ip.sh
+  source $SKYNET/func/ip.sh
 
   run v-list-web-domain $user $domain
   assert_success
 
-  USER_DATA=$HESTIA/data/users/$user
+  USER_DATA=$SKYNET/data/users/$user
   local domain_ip=$(get_object_value 'web' 'DOMAIN' "$domain" '$IP')
   SSL=$(get_object_value 'web' 'DOMAIN' "$domain" '$SSL')
   domain_ip=$(get_real_ip "$domain_ip")
@@ -146,9 +146,9 @@ function validate_webmail_domain() {
     refute [ -z "$domain" ]
     refute [ -z "$webproof" ]
 
-    source $HESTIA/func/ip.sh
+    source $SKYNET/func/ip.sh
 
-    USER_DATA=$HESTIA/data/users/$user
+    USER_DATA=$SKYNET/data/users/$user
     local domain_ip=$(get_object_value 'web' 'DOMAIN' "$domain" '$IP')
     SSL=$(get_object_value 'mail' 'DOMAIN' "$domain" '$SSL')
     domain_ip=$(get_real_ip "$domain_ip")
@@ -200,7 +200,7 @@ function validate_database(){
     local dbuser=$3
     local password=$4
 
-    host_str=$(grep "HOST='localhost'" $HESTIA/conf/$type.conf)
+    host_str=$(grep "HOST='localhost'" $SKYNET/conf/$type.conf)
     parse_object_kv_list "$host_str"
     if [ -z $PORT ]; then PORT=3306; fi
 
@@ -244,7 +244,7 @@ function check_ip_banned(){
   local ip=$1
   local chain=$2
 
-  run grep "IP='$ip' CHAIN='$chain'" $HESTIA/data/firewall/banlist.conf
+  run grep "IP='$ip' CHAIN='$chain'" $SKYNET/data/firewall/banlist.conf
   assert_success
   assert_output --partial "$ip"
 }
@@ -252,7 +252,7 @@ function check_ip_banned(){
 function check_ip_not_banned(){
   local ip=$1
   local chain=$2
-  run grep "IP='$ip' CHAIN='$chain'" $HESTIA/data/firewall/banlist.conf
+  run grep "IP='$ip' CHAIN='$chain'" $SKYNET/data/firewall/banlist.conf
   assert_failure E_ARGS
   refute_output
 }
@@ -315,55 +315,55 @@ function check_ip_not_banned(){
 #----------------------------------------------------------#
 
 @test "User: Add new user" {
-    run v-add-user $user $user $user@hestiacp.com default "Super Test"
+    run v-add-user $user $user $user@skynetcp.com default "Super Test"
     assert_success
     refute_output
 }
 
 @test "User: Add new user Failed 1" {
-	run v-add-user 'jäap' $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'jäap' $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: invalid user format'
 }
 @test "User: Add new user Failed 2" {
-	run v-add-user 'ëaap' $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'ëaap' $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: invalid user format'
 }
 
 @test "User: Add new user Failed 3" {
-	run v-add-user 'jaaẞ'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'jaaẞ'  $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: invalid user format'
 }
 
 @test "User: Add new user Failed 4" {
-	run v-add-user '1234'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user '1234'  $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: invalid user format'
 }
 
 @test "User: Add new user Failed 5" {
-	run v-add-user '1aap'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user '1aap'  $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: invalid user format'
 }
 
 @test "User: Add new user Failed 6" {
-	run v-add-user 'ib_Buffer'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'ib_Buffer'  $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: The user name'
 }
 
 @test "User: Add new user Failed 7" {
-	run v-add-user 'hello.com'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'hello.com'  $user $user@skynetcp2.com default "Super Test"
 	assert_failure $E_INVALID
 	assert_output --partial 'Error: invalid user format'
 }
 
 
 @test "User: Add new user Success 1" {
-	run v-add-user 'jaap01'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'jaap01'  $user $user@skynetcp2.com default "Super Test"
 	assert_success
 	refute_output
 }
@@ -375,7 +375,7 @@ function check_ip_not_banned(){
 }
 
 @test "User: Add new user Success 2" {
-	run v-add-user 'buffer'  $user $user@hestiacp2.com default "Super Test"
+	run v-add-user 'buffer'  $user $user@skynetcp2.com default "Super Test"
 	assert_success
 	refute_output
 }
@@ -393,13 +393,13 @@ function check_ip_not_banned(){
 }
 
 @test "User: Change user email" {
-    run v-change-user-contact "$user" tester@hestiacp.com
+    run v-change-user-contact "$user" tester@skynetcp.com
     assert_success
     refute_output
 }
 
 @test "User: Change user contact invalid email " {
-    run v-change-user-contact "$user" testerhestiacp.com
+    run v-change-user-contact "$user" testerskynetcp.com
     assert_failure $E_INVALID
     assert_output --partial 'Error: invalid email format'
 }
@@ -641,9 +641,9 @@ function check_ip_not_banned(){
     local a2_remoteip="/etc/$WEB_SYSTEM/mods-enabled/remoteip.conf"
 
     # Save initial state
-    echo "interface=${interface}" >> /tmp/hestia-test-env.sh
-    [ -f "$a2_rpaf" ]     && file_hash1=$(cat $a2_rpaf     |md5sum |cut -d" " -f1) && echo "a2_rpaf_hash='${file_hash1}'"     >> /tmp/hestia-test-env.sh
-    [ -f "$a2_remoteip" ] && file_hash2=$(cat $a2_remoteip |md5sum |cut -d" " -f1) && echo "a2_remoteip_hash='${file_hash2}'" >> /tmp/hestia-test-env.sh
+    echo "interface=${interface}" >> /tmp/skynet-test-env.sh
+    [ -f "$a2_rpaf" ]     && file_hash1=$(cat $a2_rpaf     |md5sum |cut -d" " -f1) && echo "a2_rpaf_hash='${file_hash1}'"     >> /tmp/skynet-test-env.sh
+    [ -f "$a2_remoteip" ] && file_hash2=$(cat $a2_remoteip |md5sum |cut -d" " -f1) && echo "a2_remoteip_hash='${file_hash2}'" >> /tmp/skynet-test-env.sh
 
 
     local ip="198.18.0.12"
@@ -652,9 +652,9 @@ function check_ip_not_banned(){
     refute_output
 
     assert_file_exist /etc/$WEB_SYSTEM/conf.d/$ip.conf
-    assert_file_exist $HESTIA/data/ips/$ip
-    assert_file_contains $HESTIA/data/ips/$ip "OWNER='$user'"
-    assert_file_contains $HESTIA/data/ips/$ip "INTERFACE='$interface'"
+    assert_file_exist $SKYNET/data/ips/$ip
+    assert_file_contains $SKYNET/data/ips/$ip "OWNER='$user'"
+    assert_file_contains $SKYNET/data/ips/$ip "INTERFACE='$interface'"
 
     if [ -n "$PROXY_SYSTEM" ]; then
         assert_file_exist /etc/$PROXY_SYSTEM/conf.d/$ip.conf
@@ -672,10 +672,10 @@ function check_ip_not_banned(){
 
    # Test will fail if systemd (For example Proxmox) is used for setting ip addresses. How ever there is no "decent" way to check if Netplan is used except via the method used in v-add-sys-ip and there for breaking the reason to test this. How ever if the test used in v-add-sys-ip fails it still should check if it exists!
 
-   assert_file_exist /etc/netplan/60-hestia.yaml
+   assert_file_exist /etc/netplan/60-skynet.yaml
 
    # also check if file contains the newly added ip
-   assert_file_contains /etc/netplan/60-hestia.yaml "$ip"
+   assert_file_contains /etc/netplan/60-skynet.yaml "$ip"
 }
 
 @test "Ip: [Debian] Netplan file updated" {
@@ -700,9 +700,9 @@ function check_ip_not_banned(){
     refute_output
 
     assert_file_exist /etc/$WEB_SYSTEM/conf.d/$ip.conf
-    assert_file_exist $HESTIA/data/ips/$ip
-    assert_file_contains $HESTIA/data/ips/$ip "OWNER='$user'"
-    assert_file_contains $HESTIA/data/ips/$ip "INTERFACE='$interface'"
+    assert_file_exist $SKYNET/data/ips/$ip
+    assert_file_contains $SKYNET/data/ips/$ip "OWNER='$user'"
+    assert_file_contains $SKYNET/data/ips/$ip "INTERFACE='$interface'"
 
     if [ -n "$PROXY_SYSTEM" ]; then
         assert_file_exist /etc/$PROXY_SYSTEM/conf.d/$ip.conf
@@ -721,7 +721,7 @@ function check_ip_not_banned(){
     refute_output
 
     assert_file_not_exist /etc/$WEB_SYSTEM/conf.d/$ip.conf
-    assert_file_not_exist $HESTIA/data/ips/$ip
+    assert_file_not_exist $SKYNET/data/ips/$ip
 }
 
 @test "Ip: [Ubuntu] Netplan file changed" {
@@ -731,8 +731,8 @@ function check_ip_not_banned(){
 	 fi
 
 	 ip="198.18.0.121"
-	 assert_file_exist /etc/netplan/60-hestia.yaml
-	 assert_file_contains /etc/netplan/60-hestia.yaml "$ip"
+	 assert_file_exist /etc/netplan/60-skynet.yaml
+	 assert_file_contains /etc/netplan/60-skynet.yaml "$ip"
 }
 
 @test "Ip: Delete ip 198.18.0.121" {
@@ -742,7 +742,7 @@ function check_ip_not_banned(){
 	refute_output
 
 	assert_file_not_exist /etc/$WEB_SYSTEM/conf.d/$ip.conf
-	assert_file_not_exist $HESTIA/data/ips/$ip
+	assert_file_not_exist $SKYNET/data/ips/$ip
 
 	if [ -n "$PROXY_SYSTEM" ]; then
 			assert_file_not_exist /etc/$PROXY_SYSTEM/conf.d/$ip.conf
@@ -768,9 +768,9 @@ function check_ip_not_banned(){
     refute_output
 
     assert_file_exist /etc/$WEB_SYSTEM/conf.d/$ip.conf
-    assert_file_exist $HESTIA/data/ips/$ip
-    assert_file_contains $HESTIA/data/ips/$ip "OWNER='$user'"
-    assert_file_contains $HESTIA/data/ips/$ip "INTERFACE='$interface'"
+    assert_file_exist $SKYNET/data/ips/$ip
+    assert_file_contains $SKYNET/data/ips/$ip "OWNER='$user'"
+    assert_file_contains $SKYNET/data/ips/$ip "INTERFACE='$interface'"
 
     if [ -n "$PROXY_SYSTEM" ]; then
         assert_file_exist /etc/$PROXY_SYSTEM/conf.d/$ip.conf
@@ -791,8 +791,8 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-    echo -e "<?php\necho 'Hestia Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
-    validate_web_domain $user $domain 'Hestia Test:12' 'php-test.php'
+    echo -e "<?php\necho 'skynet Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
+    validate_web_domain $user $domain 'skynet Test:12' 'php-test.php'
     rm $HOMEDIR/$user/web/$domain/public_html/php-test.php
 }
 
@@ -842,7 +842,7 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-	echo -e "<?php\necho 'Hestia Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
+	echo -e "<?php\necho 'skynet Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
     validate_web_domain $user $domain 'This site is currently suspended'
 	validate_web_domain $user $domain 'This site is currently suspended' 'php-test.php'
 	rm $HOMEDIR/$user/web/$domain/public_html/php-test.php
@@ -853,8 +853,8 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-    echo -e "<?php\necho 'Hestia Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
-    validate_web_domain $user $domain 'Hestia Test:12' 'php-test.php'
+    echo -e "<?php\necho 'skynet Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
+    validate_web_domain $user $domain 'skynet Test:12' 'php-test.php'
     rm $HOMEDIR/$user/web/$domain/public_html/php-test.php
 }
 
@@ -881,7 +881,7 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-    echo -e "<?php\necho 'Hestia Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
+    echo -e "<?php\necho 'skynet Test:'.(4*3);" > $HOMEDIR/$user/web/$domain/public_html/php-test.php
     run validate_headers_domain $user $domain "Miss"
     run validate_headers_domain $user $domain "Hit"
     rm $HOMEDIR/$user/web/$domain/public_html/php-test.php
@@ -898,7 +898,7 @@ function check_ip_not_banned(){
 
 
 @test "WEB: Generate Self signed certificate" {
-    ssl=$(v-generate-ssl-cert "$domain" "info@$domain" US CA "Orange County" HestiaCP IT "mail.$domain" | tail -n1 | awk '{print $2}')
+    ssl=$(v-generate-ssl-cert "$domain" "info@$domain" US CA "Orange County" skynetcp IT "mail.$domain" | tail -n1 | awk '{print $2}')
     echo $ssl;
     mv $ssl/$domain.crt /tmp/$domain.crt
     mv $ssl/$domain.key /tmp/$domain.key
@@ -936,7 +936,7 @@ function check_ip_not_banned(){
 
 
 @test "WEB: Generate Self signed certificate ASCII idn-tést.eu" {
-    run v-generate-ssl-cert "xn--idn-tst-fya.eu" "info@xn--idn-tst-fya.eu" US CA "Orange County" HestiaCP IT "mail.xn--idn-tst-fya.eu"
+    run v-generate-ssl-cert "xn--idn-tst-fya.eu" "info@xn--idn-tst-fya.eu" US CA "Orange County" skynetcp IT "mail.xn--idn-tst-fya.eu"
     assert_success
 }
 
@@ -954,7 +954,7 @@ function check_ip_not_banned(){
 }
 
 @test "WEB: Generate Self signed certificate ASCII bløst.рф" {
-    run v-generate-ssl-cert "xn--blst-hra.xn--p1ai" "info@xn--blst-hra.xn--p1ai" US CA "Orange County" HestiaCP IT "mail.xn--blst-hra.xn--p1ai"
+    run v-generate-ssl-cert "xn--blst-hra.xn--p1ai" "info@xn--blst-hra.xn--p1ai" US CA "Orange County" skynetcp IT "mail.xn--blst-hra.xn--p1ai"
     assert_success
 }
 
@@ -1001,8 +1001,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
 }
 
@@ -1025,8 +1025,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
 }
 
@@ -1049,8 +1049,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
 }
 
@@ -1073,8 +1073,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
 }
 
@@ -1097,8 +1097,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
 }
 
@@ -1121,8 +1121,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
 }
 
@@ -1145,8 +1145,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm $HOMEDIR/$user/web/$multi_domain/public_html/php-test.php
 }
 
@@ -1169,8 +1169,8 @@ function check_ip_not_banned(){
     num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
     assert_equal "$num_fpm_config_files" '1'
 
-    echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-    validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+    echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+    validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
     rm $HOMEDIR/$user/web/$multi_domain/public_html/php-test.php
 }
 
@@ -1193,8 +1193,8 @@ function check_ip_not_banned(){
 	num_fpm_config_files="$(find -L /etc/php/ -name "${multi_domain}.conf" | wc -l)"
 	assert_equal "$num_fpm_config_files" '1'
 
-	echo -e "<?php\necho 'hestia-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
-	validate_web_domain $user $multi_domain "hestia-multiphptest:$test_phpver" 'php-test.php'
+	echo -e "<?php\necho 'skynet-multiphptest:'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" > "$HOMEDIR/$user/web/$multi_domain/public_html/php-test.php"
+	validate_web_domain $user $multi_domain "skynet-multiphptest:$test_phpver" 'php-test.php'
 	rm $HOMEDIR/$user/web/$multi_domain/public_html/php-test.php
 }
 
@@ -1368,17 +1368,17 @@ function check_ip_not_banned(){
 }
 
 @test "DNS: Add domain record MX" {
-    run v-add-dns-record $user $domain '@' MX mx.hestiacp.com  '' 50
+    run v-add-dns-record $user $domain '@' MX mx.skynetcp.com  '' 50
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestiacp.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynetcp.com."
 
-    run v-change-dns-record $user $domain 50 '@' MX mx.hestia.com
+    run v-change-dns-record $user $domain 50 '@' MX mx.skynet.com
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestia.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynet.com."
 
     run v-delete-dns-record $user $domain 50
     assert_success
@@ -1387,17 +1387,17 @@ function check_ip_not_banned(){
 
 @test "DNS: Add domain record NS" {
     run v-delete-dns-record $user $domain 50
-    run v-add-dns-record $user $domain '@' NS mx.hestiacp.com  '' 50
+    run v-add-dns-record $user $domain '@' NS mx.skynetcp.com  '' 50
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestiacp.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynetcp.com."
 
-    run v-change-dns-record $user $domain 50 '@' NS mx.hestia.com
+    run v-change-dns-record $user $domain 50 '@' NS mx.skynet.com
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestia.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynet.com."
 
     run v-delete-dns-record $user $domain 50
     assert_success
@@ -1406,17 +1406,17 @@ function check_ip_not_banned(){
 
 @test "DNS: Add domain record SRV" {
     run v-delete-dns-record $user $domain 50
-    run v-add-dns-record $user $domain '_test_domain' SRV mx.hestiacp.com  '' 50
+    run v-add-dns-record $user $domain '_test_domain' SRV mx.skynetcp.com  '' 50
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestiacp.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynetcp.com."
 
-    run v-change-dns-record $user $domain 50 '_test.domain' SRV mx.hestia.com
+    run v-change-dns-record $user $domain 50 '_test.domain' SRV mx.skynet.com
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestia.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynet.com."
 
     run v-delete-dns-record $user $domain 50
     assert_success
@@ -1425,17 +1425,17 @@ function check_ip_not_banned(){
 
 @test "DNS: Add domain record CNAME" {
     run v-delete-dns-record $user $domain 50
-    run v-add-dns-record $user $domain 'mail' CNAME mx.hestiacp.com  '' 50
+    run v-add-dns-record $user $domain 'mail' CNAME mx.skynetcp.com  '' 50
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestiacp.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynetcp.com."
 
-    run v-change-dns-record $user $domain 50 'mail' CNAME mx.hestia.com
+    run v-change-dns-record $user $domain 50 'mail' CNAME mx.skynet.com
     assert_success
     refute_output
 
-    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.hestia.com."
+    assert_file_contains "$HOMEDIR/$user/conf/dns/${domain}.db" "mx.skynet.com."
 
     run v-delete-dns-record $user $domain 50
     assert_success
@@ -1609,37 +1609,37 @@ function check_ip_not_banned(){
 }
 
 @test "MAIL: Add account alias" {
-	run v-add-mail-account-alias $user $domain test hestiacprocks
+	run v-add-mail-account-alias $user $domain test skynetcprocks
 	assert_success
-	assert_file_contains /etc/exim4/domains/$domain/aliases "hestiacprocks@$domain"
+	assert_file_contains /etc/exim4/domains/$domain/aliases "skynetcprocks@$domain"
 	refute_output
 }
 
 @test "MAIL: Add account alias 2" {
-	run v-add-mail-account-alias $user $domain test hestiacprocks2
+	run v-add-mail-account-alias $user $domain test skynetcprocks2
 	assert_success
-	assert_file_contains /etc/exim4/domains/$domain/aliases "hestiacprocks2@$domain"
+	assert_file_contains /etc/exim4/domains/$domain/aliases "skynetcprocks2@$domain"
 	refute_output
 }
 
 @test "MAIL: Add account alias 3" {
-	run v-add-mail-account-alias $user $domain test hestiacp
+	run v-add-mail-account-alias $user $domain test skynetcp
 	assert_success
-	assert_file_contains /etc/exim4/domains/$domain/aliases "hestiacp@$domain"
+	assert_file_contains /etc/exim4/domains/$domain/aliases "skynetcp@$domain"
 	refute_output
 }
 
 @test "MAIL: Add account 3" {
-	run v-add-mail-account $user $domain hestia "$userpass2"
+	run v-add-mail-account $user $domain skynet "$userpass2"
 	assert_success
-	assert_file_contains /etc/exim4/domains/$domain/limits "hestia@$domain"
+	assert_file_contains /etc/exim4/domains/$domain/limits "skynet@$domain"
 	refute_output
 }
 
 @test "MAIL: Add account 4" {
-	run v-add-mail-account $user $domain hestiarocks3 "$userpass2"
+	run v-add-mail-account $user $domain skynetrocks3 "$userpass2"
 	assert_success
-	assert_file_contains /etc/exim4/domains/$domain/limits "hestiarocks3@$domain"
+	assert_file_contains /etc/exim4/domains/$domain/limits "skynetrocks3@$domain"
 	refute_output
 }
 
@@ -1658,7 +1658,7 @@ function check_ip_not_banned(){
 }
 
 @test "MAIL: Add account alias Invalid length" {
-	run v-add-mail-account-alias $user $domain test 'hestiacp-really-rocks-but-i-want-to-have-feature-xyz-and-i-want-it-now'
+	run v-add-mail-account-alias $user $domain test 'skynetcp-really-rocks-but-i-want-to-have-feature-xyz-and-i-want-it-now'
 	assert_failure $E_INVALID
 }
 @test "MAIL: Add account alias Invalid" {
@@ -1674,12 +1674,12 @@ function check_ip_not_banned(){
 	assert_success
 }
 @test "MAIL: Add account alias Invalid 2" {
-	run v-add-mail-account-alias $user $domain test 'hestia@test'
+	run v-add-mail-account-alias $user $domain test 'skynet@test'
 	assert_failure $E_INVALID
 }
 
 @test "MAIL: Add account alias (duplicate)" {
-	run v-add-mail-account-alias $user $domain test hestiacprocks
+	run v-add-mail-account-alias $user $domain test skynetcprocks
 	assert_failure $E_EXISTS
 }
 
@@ -1722,11 +1722,11 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-    run grep "RECORD='_domainkey'" "${HESTIA}/data/users/${user}/dns/${domain}.conf"
+    run grep "RECORD='_domainkey'" "${skynet}/data/users/${user}/dns/${domain}.conf"
     assert_failure
     refute_output
 
-    run grep "RECORD='mail._domainkey'" "${HESTIA}/data/users/${user}/dns/${domain}.conf"
+    run grep "RECORD='mail._domainkey'" "${skynet}/data/users/${user}/dns/${domain}.conf"
     assert_failure
     refute_output
 }
@@ -1736,11 +1736,11 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-    run grep "RECORD='_domainkey'" "${HESTIA}/data/users/${user}/dns/${domain}.conf"
+    run grep "RECORD='_domainkey'" "${skynet}/data/users/${user}/dns/${domain}.conf"
     assert_success
     assert_output --partial "RECORD='_domainkey' TYPE='TXT'"
 
-    run grep "RECORD='mail._domainkey'" "${HESTIA}/data/users/${user}/dns/${domain}.conf"
+    run grep "RECORD='mail._domainkey'" "${skynet}/data/users/${user}/dns/${domain}.conf"
     assert_success
     assert_output  --partial "RECORD='mail._domainkey' TYPE='TXT'"
 }
@@ -1754,7 +1754,7 @@ function check_ip_not_banned(){
     assert_success
     refute_output
 
-    run grep "RECORD='k2._domainkey'" "${HESTIA}/data/users/${user}/dns/${domain}.conf"
+    run grep "RECORD='k2._domainkey'" "${skynet}/data/users/${user}/dns/${domain}.conf"
     assert_success
     assert_output --partial "RECORD='k2._domainkey' TYPE='TXT'"
 }
@@ -1767,7 +1767,7 @@ function check_ip_not_banned(){
 @test "Allow Users: User can't add user.user2.com " {
     # Case: admin company.tld
     # users should not be allowed to add user.company.tld
-    run v-add-user $user2 $user2 $user@hestiacp.com default "Super Test"
+    run v-add-user $user2 $user2 $user@skynetcp.com default "Super Test"
     assert_success
     refute_output
 
@@ -1936,7 +1936,7 @@ function check_ip_not_banned(){
   if [ -z "$(echo $DB_SYSTEM | grep -w "pgsql")" ]; then
     skip "PostGreSQL is not installed"
   fi
-  run v-add-user $pguser $pguser $user@hestiacp.com default "Super Test"
+  run v-add-user $pguser $pguser $user@skynetcp.com default "Super Test"
   run v-add-database "$pguser" "database" "dbuser" "1234ABCD" "pgsql"
   assert_success
   refute_output
@@ -2053,43 +2053,43 @@ function check_ip_not_banned(){
 #----------------------------------------------------------#
 
 @test "Firewall: Add ip to banlist" {
-  run v-add-firewall-ban '1.2.3.4' 'HESTIA'
+  run v-add-firewall-ban '1.2.3.4' 'skynet'
   assert_success
   refute_output
 
-  check_ip_banned '1.2.3.4' 'HESTIA'
+  check_ip_banned '1.2.3.4' 'skynet'
 }
 
 @test "Firewall: Delete ip to banlist" {
-  run v-delete-firewall-ban '1.2.3.4' 'HESTIA'
+  run v-delete-firewall-ban '1.2.3.4' 'skynet'
   assert_success
   refute_output
-  check_ip_not_banned '1.2.3.4' 'HESTIA'
+  check_ip_not_banned '1.2.3.4' 'skynet'
 }
 
 @test "Firewall: Add ip to banlist for ALL" {
-  run v-add-firewall-ban '1.2.3.4' 'HESTIA'
+  run v-add-firewall-ban '1.2.3.4' 'skynet'
   assert_success
   refute_output
   run v-add-firewall-ban '1.2.3.4' 'MAIL'
   assert_success
   refute_output
-  check_ip_banned '1.2.3.4' 'HESTIA'
+  check_ip_banned '1.2.3.4' 'skynet'
 }
 
 @test "Firewall: Delete ip to banlist CHAIN = ALL" {
   run v-delete-firewall-ban '1.2.3.4' 'ALL'
   assert_success
   refute_output
-  check_ip_not_banned '1.2.3.4' 'HESTIA'
+  check_ip_not_banned '1.2.3.4' 'skynet'
 }
 
 @test "Test Whitelist Fail2ban" {
 
-echo   "1.2.3.4" >> $HESTIA/data/firewall/excludes.conf
-  run v-add-firewall-ban '1.2.3.4' 'HESTIA'
-  rm $HESTIA/data/firewall/excludes.conf
-  check_ip_not_banned '1.2.3.4' 'HESTIA'
+echo   "1.2.3.4" >> $SKYNET/data/firewall/excludes.conf
+  run v-add-firewall-ban '1.2.3.4' 'skynet'
+  rm $SKYNET/data/firewall/excludes.conf
+  check_ip_not_banned '1.2.3.4' 'skynet'
 }
 
 @test "Test create ipset" {
@@ -2128,63 +2128,63 @@ echo   "1.2.3.4" >> $HESTIA/data/firewall/excludes.conf
 #----------------------------------------------------------#
 
 @test "Package: Create new Package" {
-    cp $HESTIA/data/packages/default.pkg /tmp/package
-    run v-add-user-package /tmp/package hestiatest
+    cp $SKYNET/data/packages/default.pkg /tmp/package
+    run v-add-user-package /tmp/package skynettest
     assert_success
     refute_output
 }
 
 @test "Package: Assign user to new Package" {
-    run v-change-user-package  $user hestiatest
+    run v-change-user-package  $user skynettest
     assert_success
     refute_output
 }
 
 @test "Package: Create new package (Duplicate)" {
     sed -i "s/BANDWIDTH='unlimited'/BANDWIDTH='100'/g" /tmp/package
-    run v-add-user-package /tmp/package hestiatest
+    run v-add-user-package /tmp/package skynettest
     assert_failure $E_EXISTS
 }
 
 @test "Package: Update new Package" {
     sed -i "s/BANDWIDTH='unlimited'/BANDWIDTH='100'/g" /tmp/package
-    run v-add-user-package /tmp/package hestiatest yes
+    run v-add-user-package /tmp/package skynettest yes
     assert_success
     refute_output
 }
 
 @test "Package: Update package of user" {
-    run v-change-user-package  $user hestiatest
+    run v-change-user-package  $user skynettest
     assert_success
     refute_output
-    run grep "BANDWIDTH='100'" $HESTIA/data/users/$user/user.conf
+    run grep "BANDWIDTH='100'" $SKYNET/data/users/$user/user.conf
     assert_success
     assert_output --partial "100"
 }
 
 @test "Package: Copy package Not Exists" {
-  run v-copy-user-package hestiadoesnotexists hestiatest2
+  run v-copy-user-package skynetdoesnotexists skynettest2
   assert_failure $E_NOTEXIST
 }
 
 @test "Package: Copy package" {
-  run v-copy-user-package hestiatest hestiatest2
+  run v-copy-user-package skynettest skynettest2
   assert_success
   refute_output
 }
 
 @test "Package: Copy package Exists" {
-  run v-copy-user-package hestiatest hestiatest2
+  run v-copy-user-package skynettest skynettest2
   assert_failure $E_EXISTS
 }
 
 @test "Package: Delete package" {
-    run v-delete-user-package hestiatest
-    run v-delete-user-package hestiatest2
+    run v-delete-user-package skynettest
+    run v-delete-user-package skynettest2
     rm /tmp/package
     assert_success
     refute_output
-    run grep "BANDWIDTH='unlimited'" $HESTIA/data/users/$user/user.conf
+    run grep "BANDWIDTH='unlimited'" $SKYNET/data/users/$user/user.conf
     assert_success
     assert_output --partial "unlimited"
 }

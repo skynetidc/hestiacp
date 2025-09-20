@@ -1,20 +1,20 @@
 #!/bin/bash
-# info: delete hestia autoupdate cron job
+# info: delete skynet autoupdate cron job
 # options: NONE
 #
-# This function deletes hestia autoupdate cron job.
+# This function deletes skynet autoupdate cron job.
 
 #----------------------------------------------------------#
 #                Variables & Functions                     #
 #----------------------------------------------------------#
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 #----------------------------------------------------------#
 #                    Verifications                         #
@@ -23,17 +23,17 @@ source_conf "$HESTIA/conf/hestia.conf"
 is_system_enabled "$CRON_SYSTEM" 'CRON_SYSTEM'
 
 # Perform verification if read-only mode is enabled
-check_hestia_demo_mode
+check_skynet_demo_mode
 
 #----------------------------------------------------------#
 #                       Action                             #
 #----------------------------------------------------------#
 
-sed -i "/v-update-sys-hestia-all/d" "/var/spool/cron/crontabs/hestiaweb"
-sed -i "/v-update-sys-hestia-git/d" "/var/spool/cron/crontabs/hestiaweb"
+sed -i "/v-update-sys-skynet-all/d" "/var/spool/cron/crontabs/skynetweb"
+sed -i "/v-update-sys-skynet-git/d" "/var/spool/cron/crontabs/skynetweb"
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 # Restarting crond

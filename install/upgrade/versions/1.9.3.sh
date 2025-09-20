@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Hestia Control Panel upgrade script for target version 1.9.3
+# skynet Control Panel upgrade script for target version 1.9.3
 
 #######################################################################################
 #######                      Place additional commands below.                   #######
@@ -29,18 +29,18 @@ if [ ! -f /etc/apparmor.d/abi/4.0 ]; then
 fi
 
 if [ -x /usr/sbin/jailbash ]; then
-	$HESTIA/bin/v-delete-sys-ssh-jail
-	$HESTIA/bin/v-add-sys-ssh-jail
+	$SKYNET/bin/v-delete-sys-ssh-jail
+	$SKYNET/bin/v-add-sys-ssh-jail
 fi
 
 # Check if file exists
-if [ -f "/etc/cron.d/hestiaweb" ]; then
+if [ -f "/etc/cron.d/skynetweb" ]; then
 	# Just remove it
-	rm -f /etc/cron.d/hestiaweb
+	rm -f /etc/cron.d/skynetweb
 	# Check if not duplicate
-	if [ -z "$(grep $BIN/v-update-letsencrypt "/var/spool/cron/crontabs/hestiaweb")" ]; then
+	if [ -z "$(grep $BIN/v-update-letsencrypt "/var/spool/cron/crontabs/skynetweb")" ]; then
 		min=$(generate_password '012345' '2')
 		hour=$(generate_password '1234567' '1')
-		sed -i -e "\$a*/5 * * * * sudo $BIN/v-update-letsencrypt" "/var/spool/cron/crontabs/hestiaweb"
+		sed -i -e "\$a*/5 * * * * sudo $BIN/v-update-letsencrypt" "/var/spool/cron/crontabs/skynetweb"
 	fi
 fi

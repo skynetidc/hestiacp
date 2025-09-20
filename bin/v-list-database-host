@@ -16,14 +16,14 @@ host=$2
 format=${3-shell}
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
-# shellcheck source=/usr/local/hestia/func/db.sh
-source $HESTIA/func/db.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
+# shellcheck source=/usr/local/skynet/func/db.sh
+source $SKYNET/func/db.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 
 # JSON list function
 json_list() {
@@ -98,7 +98,7 @@ database_set_default_ports
 #----------------------------------------------------------#
 
 # Parsing hosts
-parse_object_kv_list $(grep "HOST='$host'" $HESTIA/conf/$type.conf)
+parse_object_kv_list $(grep "HOST='$host'" $SKYNET/conf/$type.conf)
 
 # Listing data
 case $format in
@@ -109,7 +109,7 @@ case $format in
 esac
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 exit

@@ -9,7 +9,7 @@ if (
 	($_SESSION["userContext"] === "admin" && $_SESSION["POLICY_SYSTEM_HIDE_SERVICES"] == "no") ||
 	$_SESSION["user"] == $_SESSION["ROOT_USER"]
 ) {
-	exec(HESTIA_CMD . "v-add-cron-hestia-autoupdate", $output, $return_var);
+	exec(SKYNET_CMD . "v-add-cron-skynet-autoupdate", $output, $return_var);
 	unset($output);
 }
 

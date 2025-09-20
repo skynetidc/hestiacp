@@ -1,5 +1,5 @@
 <?php
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 ob_start();
 include $_SERVER["DOCUMENT_ROOT"] . "/inc/main.php";
@@ -15,13 +15,13 @@ if (empty($_GET["object"])) {
 
 if (empty($_GET["type"])) {
 	exec(
-		HESTIA_CMD . "v-schedule-user-restore-restic " . $user . " " . $snapshot,
+		SKYNET_CMD . "v-schedule-user-restore-restic " . $user . " " . $snapshot,
 		$output,
 		$return_var,
 	);
 } else {
 	exec(
-		HESTIA_CMD .
+		SKYNET_CMD .
 			"v-schedule-user-restore-restic " .
 			$user .
 			" " .

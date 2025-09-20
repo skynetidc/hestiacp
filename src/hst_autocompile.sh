@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # set -e
-# Autocompile Script for HestiaCP package Files.
+# Autocompile Script for skynetcp package Files.
 # For building from local source folder use "~localsrc" keyword as hesia branch name,
 #   and the script will not try to download the arhive from github, since '~' char is
 #   not accepted in branch name.
-# Compile but dont install -> ./hst_autocompile.sh --hestia --noinstall --keepbuild '~localsrc'
-# Compile and install -> ./hst_autocompile.sh --hestia --install '~localsrc'
+# Compile but dont install -> ./hst_autocompile.sh --skynet --noinstall --keepbuild '~localsrc'
+# Compile and install -> ./hst_autocompile.sh --skynet --install '~localsrc'
 
 # Clear previous screen output
 clear
@@ -17,7 +17,7 @@ download_file() {
 	local destination=$2
 	local force=$3
 
-	[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: Downloading file "$url" to "$destination"
+	[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: Downloading file "$url" to "$destination"
 
 	# Default destination is the current working directory
 	local dstopt=""
@@ -48,7 +48,7 @@ download_file() {
 	fi
 
 	if [ ! -f "$ARCHIVE_DIR/$filename" ]; then
-		[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: wget $url -q $dstopt --show-progress --progress=bar:force --limit-rate=3m
+		[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: wget $url -q $dstopt --show-progress --progress=bar:force --limit-rate=3m
 		wget $url -q $dstopt --show-progress --progress=bar:force --limit-rate=3m
 		if [ $? -ne 0 ]; then
 			echo >&2 "[!] Archive $ARCHIVE_DIR/$filename is corrupted and exit script"
@@ -69,13 +69,13 @@ download_file() {
 get_branch_file() {
 	local filename=$1
 	local destination=$2
-	[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: Get branch file "$filename" to "$destination"
+	[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: Get branch file "$filename" to "$destination"
 	if [ "$use_src_folder" == 'true' ]; then
 		if [ -z "$destination" ]; then
-			[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" ./
+			[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" ./
 			cp -f "$SRC_DIR/$filename" ./
 		else
-			[ "$HESTIA_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" "$destination"
+			[ "$SKYNET_DEBUG" ] && echo >&2 DEBUG: cp -f "$SRC_DIR/$filename" "$destination"
 			cp -f "$SRC_DIR/$filename" "$destination"
 		fi
 	else
@@ -85,32 +85,32 @@ get_branch_file() {
 
 usage() {
 	echo "Usage:"
-	echo "    $0 (--all|--hestia|--nginx|--php|--web-terminal) [options] [branch] [Y]"
+	echo "    $0 (--all|--skynet|--nginx|--php|--web-terminal) [options] [branch] [Y]"
 	echo ""
-	echo "    --all           Build all hestia packages."
-	echo "    --hestia        Build only the Control Panel package."
+	echo "    --all           Build all skynet packages."
+	echo "    --skynet        Build only the Control Panel package."
 	echo "    --nginx         Build only the backend nginx engine package."
 	echo "    --php           Build only the backend php engine package"
 	echo "    --web-terminal  Build only the backend web terminal websocket package"
 	echo "  Options:"
 	echo "    --install       Install generated packages"
 	echo "    --keepbuild     Don't delete downloaded source and build folders"
-	echo "    --cross         Compile hestia package for both AMD64 and ARM64"
+	echo "    --cross         Compile skynet package for both AMD64 and ARM64"
 	echo "    --debug         Debug mode"
 	echo ""
 	echo "For automated builds and installations, you may specify the branch"
 	echo "after one of the above flags. To install the packages, specify 'Y'"
 	echo "following the branch name."
 	echo ""
-	echo "Example: bash hst_autocompile.sh --hestia develop Y"
-	echo "This would install a Hestia Control Panel package compiled with the"
+	echo "Example: bash hst_autocompile.sh --skynet develop Y"
+	echo "This would install a skynet Control Panel package compiled with the"
 	echo "develop branch code."
 }
 
 # Set compiling directory
-REPO='hestiacp/hestiacp'
-BUILD_DIR='/tmp/hestiacp-src'
-INSTALL_DIR='/usr/local/hestia'
+REPO='skynetcp/skynetcp'
+BUILD_DIR='/tmp/skynetcp-src'
+INSTALL_DIR='/usr/local/skynet'
 SRC_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 ARCHIVE_DIR="$SRC_DIR/src/archive/"
 architecture="$(arch)"
@@ -138,7 +138,7 @@ for i in $*; do
 			NGINX_B='true'
 			PHP_B='true'
 			WEB_TERMINAL_B='true'
-			HESTIA_B='true'
+			skynet_B='true'
 			;;
 		--nginx)
 			NGINX_B='true'
@@ -149,11 +149,11 @@ for i in $*; do
 		--web-terminal)
 			WEB_TERMINAL_B='true'
 			;;
-		--hestia)
-			HESTIA_B='true'
+		--skynet)
+			skynet_B='true'
 			;;
 		--debug)
-			HESTIA_DEBUG='true'
+			skynet_DEBUG='true'
 			;;
 		--install | Y)
 			install='true'
@@ -207,13 +207,13 @@ if [ -z $install ]; then
 fi
 
 # Set Version for compiling
-if [ -f "$SRC_DIR/src/deb/hestia/control" ] && [ "$use_src_folder" == 'true' ]; then
-	BUILD_VER=$(cat $SRC_DIR/src/deb/hestia/control | grep "Version:" | cut -d' ' -f2)
+if [ -f "$SRC_DIR/src/deb/skynet/control" ] && [ "$use_src_folder" == 'true' ]; then
+	BUILD_VER=$(cat $SRC_DIR/src/deb/skynet/control | grep "Version:" | cut -d' ' -f2)
 	NGINX_V=$(cat $SRC_DIR/src/deb/nginx/control | grep "Version:" | cut -d' ' -f2)
 	PHP_V=$(cat $SRC_DIR/src/deb/php/control | grep "Version:" | cut -d' ' -f2)
 	WEB_TERMINAL_V=$(cat $SRC_DIR/src/deb/web-terminal/control | grep "Version:" | cut -d' ' -f2)
 else
-	BUILD_VER=$(curl -s https://raw.githubusercontent.com/$REPO/$branch/src/deb/hestia/control | grep "Version:" | cut -d' ' -f2)
+	BUILD_VER=$(curl -s https://raw.githubusercontent.com/$REPO/$branch/src/deb/skynet/control | grep "Version:" | cut -d' ' -f2)
 	NGINX_V=$(curl -s https://raw.githubusercontent.com/$REPO/$branch/src/deb/nginx/control | grep "Version:" | cut -d' ' -f2)
 	PHP_V=$(curl -s https://raw.githubusercontent.com/$REPO/$branch/src/deb/php/control | grep "Version:" | cut -d' ' -f2)
 	WEB_TERMINAL_V=$(curl -s https://raw.githubusercontent.com/$REPO/$branch/src/deb/web-terminal/control | grep "Version:" | cut -d' ' -f2)
@@ -227,9 +227,9 @@ fi
 echo "Build version $BUILD_VER, with Nginx version $NGINX_V, PHP version $PHP_V and Web Terminal version $WEB_TERMINAL_V"
 
 if [ -e "/etc/redhat-release" ]; then
-	HESTIA_V="${BUILD_VER}"
+	skynet_V="${BUILD_VER}"
 else
-	HESTIA_V="${BUILD_VER}_${BUILD_ARCH}"
+	skynet_V="${BUILD_VER}_${BUILD_ARCH}"
 fi
 OPENSSL_V='3.4.0'
 PCRE_V='10.44'
@@ -308,7 +308,7 @@ fi
 # Get system cpu cores
 NUM_CPUS=$(grep "^cpu cores" /proc/cpuinfo | uniq | awk '{print $4}')
 
-if [ "$HESTIA_DEBUG" ]; then
+if [ "$SKYNET_DEBUG" ]; then
 	if [ "$OSTYPE" = 'rhel' ]; then
 		echo "OS type          : RHEL / Rocky Linux / AlmaLinux / EuroLinux"
 	else
@@ -318,17 +318,17 @@ if [ "$HESTIA_DEBUG" ]; then
 	echo "Install          : $install"
 	echo "Build RPM        : $BUILD_RPM"
 	echo "Build DEB        : $BUILD_DEB"
-	echo "Hestia version   : $BUILD_VER"
+	echo "skynet version   : $BUILD_VER"
 	echo "Nginx version    : $NGINX_V"
 	echo "PHP version      : $PHP_V"
 	echo "Web Term version : $WEB_TERMINAL_V"
 	echo "Architecture     : $BUILD_ARCH"
-	echo "Debug mode       : $HESTIA_DEBUG"
+	echo "Debug mode       : $SKYNET_DEBUG"
 	echo "Source directory : $SRC_DIR"
 fi
 
 # Generate Links for sourcecode
-HESTIA_ARCHIVE_LINK='https://github.com/hestiacp/hestiacp/archive/'$branch'.tar.gz'
+skynet_ARCHIVE_LINK='https://github.com/skynetcp/skynetcp/archive/'$branch'.tar.gz'
 if [[ $NGINX_V =~ - ]]; then
 	NGINX='https://nginx.org/download/nginx-'$(echo $NGINX_V | cut -d"-" -f1)'.tar.gz'
 else
@@ -350,14 +350,14 @@ branch_dash=$(echo "$branch" | sed 's/\//-/g')
 
 #################################################################################
 #
-# Building hestia-nginx
+# Building skynet-nginx
 #
 #################################################################################
 
 if [ "$NGINX_B" = true ]; then
-	echo "Building hestia-nginx package..."
+	echo "Building skynet-nginx package..."
 	if [ "$CROSS" = "true" ]; then
-		echo "Cross compile not supported for hestia-nginx, hestia-php or hestia-web-terminal"
+		echo "Cross compile not supported for skynet-nginx, skynet-php or skynet-web-terminal"
 		exit 1
 	fi
 
@@ -365,22 +365,22 @@ if [ "$NGINX_B" = true ]; then
 		# Change to build directory
 		cd $BUILD_DIR
 
-		BUILD_DIR_HESTIANGINX=$BUILD_DIR/hestia-nginx_$NGINX_V
+		BUILD_DIR_skynetNGINX=$BUILD_DIR/skynet-nginx_$NGINX_V
 		if [[ $NGINX_V =~ - ]]; then
 			BUILD_DIR_NGINX=$BUILD_DIR/nginx-$(echo $NGINX_V | cut -d"-" -f1)
 		else
 			BUILD_DIR_NGINX=$BUILD_DIR/nginx-$(echo $NGINX_V | cut -d"~" -f1)
 		fi
 
-		if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_HESTIANGINX" ]; then
+		if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_skynetNGINX" ]; then
 			# Check if target directory exist
-			if [ -d "$BUILD_DIR_HESTIANGINX" ]; then
-				#mv $BUILD_DIR/hestia-nginx_$NGINX_V $BUILD_DIR/hestia-nginx_$NGINX_V-$(timestamp)
-				rm -r "$BUILD_DIR_HESTIANGINX"
+			if [ -d "$BUILD_DIR_skynetNGINX" ]; then
+				#mv $BUILD_DIR/skynet-nginx_$NGINX_V $BUILD_DIR/skynet-nginx_$NGINX_V-$(timestamp)
+				rm -r "$BUILD_DIR_skynetNGINX"
 			fi
 
 			# Create directory
-			mkdir -p $BUILD_DIR_HESTIANGINX
+			mkdir -p $BUILD_DIR_skynetNGINX
 
 			# Download and unpack source files
 			download_file $NGINX '-' | tar xz
@@ -392,7 +392,7 @@ if [ "$NGINX_B" = true ]; then
 			cd $BUILD_DIR_NGINX
 
 			# configure nginx
-			./configure --prefix=/usr/local/hestia/nginx \
+			./configure --prefix=/usr/local/skynet/nginx \
 				--with-http_v2_module \
 				--with-http_ssl_module \
 				--with-openssl=../openssl-$OPENSSL_V \
@@ -413,9 +413,9 @@ if [ "$NGINX_B" = true ]; then
 			rm -r "$BUILD_DIR$INSTALL_DIR"
 		fi
 
-		# Copy local hestia source files
+		# Copy local skynet source files
 		if [ "$use_src_folder" == 'true' ] && [ -d $SRC_DIR ]; then
-			cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
+			cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
 		fi
 
 		# Create the files and install them
@@ -425,54 +425,54 @@ if [ "$NGINX_B" = true ]; then
 		if [ "$KEEPBUILD" != 'true' ]; then
 			rm -r $BUILD_DIR_NGINX $BUILD_DIR/openssl-$OPENSSL_V $BUILD_DIR/pcre2-$PCRE_V $BUILD_DIR/zlib-$ZLIB_V
 		fi
-		cd $BUILD_DIR_HESTIANGINX
+		cd $BUILD_DIR_skynetNGINX
 
 		# Move nginx directory
-		mkdir -p $BUILD_DIR_HESTIANGINX/usr/local/hestia
-		rm -rf $BUILD_DIR_HESTIANGINX/usr/local/hestia/nginx
-		mv $BUILD_DIR/usr/local/hestia/nginx $BUILD_DIR_HESTIANGINX/usr/local/hestia/
+		mkdir -p $BUILD_DIR_skynetNGINX/usr/local/skynet
+		rm -rf $BUILD_DIR_skynetNGINX/usr/local/skynet/nginx
+		mv $BUILD_DIR/usr/local/skynet/nginx $BUILD_DIR_skynetNGINX/usr/local/skynet/
 
 		# Remove original nginx.conf (will use custom)
-		rm -f $BUILD_DIR_HESTIANGINX/usr/local/hestia/nginx/conf/nginx.conf
+		rm -f $BUILD_DIR_skynetNGINX/usr/local/skynet/nginx/conf/nginx.conf
 
 		# copy binary
-		mv $BUILD_DIR_HESTIANGINX/usr/local/hestia/nginx/sbin/nginx $BUILD_DIR_HESTIANGINX/usr/local/hestia/nginx/sbin/hestia-nginx
+		mv $BUILD_DIR_skynetNGINX/usr/local/skynet/nginx/sbin/nginx $BUILD_DIR_skynetNGINX/usr/local/skynet/nginx/sbin/skynet-nginx
 
 		# change permission and build the package
 		cd $BUILD_DIR
-		chown -R root:root $BUILD_DIR_HESTIANGINX
+		chown -R root:root $BUILD_DIR_skynetNGINX
 		# Get Debian package files
-		mkdir -p $BUILD_DIR_HESTIANGINX/DEBIAN
-		get_branch_file 'src/deb/nginx/control' "$BUILD_DIR_HESTIANGINX/DEBIAN/control"
+		mkdir -p $BUILD_DIR_skynetNGINX/DEBIAN
+		get_branch_file 'src/deb/nginx/control' "$BUILD_DIR_skynetNGINX/DEBIAN/control"
 		if [ "$BUILD_ARCH" != "amd64" ]; then
-			sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_HESTIANGINX/DEBIAN/control"
+			sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_skynetNGINX/DEBIAN/control"
 		fi
-		get_branch_file 'src/deb/nginx/copyright' "$BUILD_DIR_HESTIANGINX/DEBIAN/copyright"
-		get_branch_file 'src/deb/nginx/postinst' "$BUILD_DIR_HESTIANGINX/DEBIAN/postinst"
-		get_branch_file 'src/deb/nginx/postrm' "$BUILD_DIR_HESTIANGINX/DEBIAN/portrm"
-		chmod +x "$BUILD_DIR_HESTIANGINX/DEBIAN/postinst"
-		chmod +x "$BUILD_DIR_HESTIANGINX/DEBIAN/portrm"
+		get_branch_file 'src/deb/nginx/copyright' "$BUILD_DIR_skynetNGINX/DEBIAN/copyright"
+		get_branch_file 'src/deb/nginx/postinst' "$BUILD_DIR_skynetNGINX/DEBIAN/postinst"
+		get_branch_file 'src/deb/nginx/postrm' "$BUILD_DIR_skynetNGINX/DEBIAN/portrm"
+		chmod +x "$BUILD_DIR_skynetNGINX/DEBIAN/postinst"
+		chmod +x "$BUILD_DIR_skynetNGINX/DEBIAN/portrm"
 
 		# Init file
-		mkdir -p $BUILD_DIR_HESTIANGINX/etc/init.d
-		get_branch_file 'src/deb/nginx/hestia' "$BUILD_DIR_HESTIANGINX/etc/init.d/hestia"
-		chmod +x "$BUILD_DIR_HESTIANGINX/etc/init.d/hestia"
+		mkdir -p $BUILD_DIR_skynetNGINX/etc/init.d
+		get_branch_file 'src/deb/nginx/skynet' "$BUILD_DIR_skynetNGINX/etc/init.d/skynet"
+		chmod +x "$BUILD_DIR_skynetNGINX/etc/init.d/skynet"
 
 		# Custom config
-		get_branch_file 'src/deb/nginx/nginx.conf' "${BUILD_DIR_HESTIANGINX}/usr/local/hestia/nginx/conf/nginx.conf"
+		get_branch_file 'src/deb/nginx/nginx.conf' "${BUILD_DIR_skynetNGINX}/usr/local/skynet/nginx/conf/nginx.conf"
 
 		# Build the package
 		echo Building Nginx DEB
-		dpkg-deb -Zxz --build $BUILD_DIR_HESTIANGINX $DEB_DIR
+		dpkg-deb -Zxz --build $BUILD_DIR_skynetNGINX $DEB_DIR
 
 		rm -r $BUILD_DIR/usr
 
 		if [ "$KEEPBUILD" != 'true' ]; then
 			# Clean up the source folder
-			rm -r hestia- nginx_$NGINX_V
+			rm -r skynet- nginx_$NGINX_V
 			rm -rf $BUILD_DIR/rpmbuild
-			if [ "$use_src_folder" == 'true' ] && [ -d $BUILD_DIR/hestiacp-$branch_dash ]; then
-				rm -r $BUILD_DIR/hestiacp-$branch_dash
+			if [ "$use_src_folder" == 'true' ] && [ -d $BUILD_DIR/skynetcp-$branch_dash ]; then
+				rm -r $BUILD_DIR/skynetcp-$branch_dash
 			fi
 		fi
 	fi
@@ -480,16 +480,16 @@ if [ "$NGINX_B" = true ]; then
 	if [ "$BUILD_RPM" = true ]; then
 		# Get RHEL package files
 		get_branch_file 'src/rpm/nginx/nginx.conf' "$HOME/rpmbuild/SOURCES/nginx.conf"
-		get_branch_file 'src/rpm/nginx/hestia-nginx.spec' "$HOME/rpmbuild/SPECS/hestia-nginx.spec"
-		get_branch_file 'src/rpm/nginx/hestia-nginx.service' "$HOME/rpmbuild/SOURCES/hestia-nginx.service"
+		get_branch_file 'src/rpm/nginx/skynet-nginx.spec' "$HOME/rpmbuild/SPECS/skynet-nginx.spec"
+		get_branch_file 'src/rpm/nginx/skynet-nginx.service' "$HOME/rpmbuild/SOURCES/skynet-nginx.service"
 
 		# Download source files
 		download_file $NGINX "$HOME/rpmbuild/SOURCES/"
 
 		# Build the package
 		echo Building Nginx RPM
-		rpmbuild -bs ~/rpmbuild/SPECS/hestia-nginx.spec
-		mock -r rocky+epel-9-$(arch) ~/rpmbuild/SRPMS/hestia-nginx-$NGINX_V-1.el9.src.rpm
+		rpmbuild -bs ~/rpmbuild/SPECS/skynet-nginx.spec
+		mock -r rocky+epel-9-$(arch) ~/rpmbuild/SRPMS/skynet-nginx-$NGINX_V-1.el9.src.rpm
 		cp /var/lib/mock/rocky+epel-9-$(arch)/result/*.rpm $RPM_DIR
 		rm -rf ~/rpmbuild/SPECS/* ~/rpmbuild/SOURCES/* ~/rpmbuild/SRPMS/*
 	fi
@@ -497,20 +497,20 @@ fi
 
 #################################################################################
 #
-# Building hestia-php
+# Building skynet-php
 #
 #################################################################################
 
 if [ "$PHP_B" = true ]; then
 	if [ "$CROSS" = "true" ]; then
-		echo "Cross compile not supported for hestia-nginx, hestia-php or hestia-web-terminal"
+		echo "Cross compile not supported for skynet-nginx, skynet-php or skynet-web-terminal"
 		exit 1
 	fi
 
-	echo "Building hestia-php package..."
+	echo "Building skynet-php package..."
 
 	if [ "$BUILD_DEB" = true ]; then
-		BUILD_DIR_HESTIAPHP=$BUILD_DIR/hestia-php_$PHP_V
+		BUILD_DIR_skynetPHP=$BUILD_DIR/skynet-php_$PHP_V
 
 		BUILD_DIR_PHP=$BUILD_DIR/php-$(echo $PHP_V | cut -d"~" -f1)
 
@@ -520,14 +520,14 @@ if [ "$PHP_B" = true ]; then
 			BUILD_DIR_PHP=$BUILD_DIR/php-$(echo $PHP_V | cut -d"~" -f1)
 		fi
 
-		if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_HESTIAPHP" ]; then
+		if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_skynetPHP" ]; then
 			# Check if target directory exist
-			if [ -d $BUILD_DIR_HESTIAPHP ]; then
-				rm -r $BUILD_DIR_HESTIAPHP
+			if [ -d $BUILD_DIR_skynetPHP ]; then
+				rm -r $BUILD_DIR_skynetPHP
 			fi
 
 			# Create directory
-			mkdir -p $BUILD_DIR_HESTIAPHP
+			mkdir -p $BUILD_DIR_skynetPHP
 
 			# Download and unpack source files
 			cd $BUILD_DIR
@@ -537,7 +537,7 @@ if [ "$PHP_B" = true ]; then
 			cd $BUILD_DIR_PHP
 
 			# Configure PHP
-			./configure --prefix=/usr/local/hestia/php \
+			./configure --prefix=/usr/local/skynet/php \
 				--with-libdir=lib/$(arch)-linux-gnu \
 				--enable-fpm --with-fpm-user=admin --with-fpm-group=admin \
 				--with-openssl \
@@ -554,68 +554,68 @@ if [ "$PHP_B" = true ]; then
 		# Create the files and install them
 		make -j $NUM_CPUS && make INSTALL_ROOT=$BUILD_DIR install
 
-		# Copy local hestia source files
+		# Copy local skynet source files
 		if [ "$use_src_folder" == 'true' ] && [ -d $SRC_DIR ]; then
-			[ "$HESTIA_DEBUG" ] && echo DEBUG: cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
-			cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
+			[ "$SKYNET_DEBUG" ] && echo DEBUG: cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
+			cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
 		fi
 		# Move php directory
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_HESTIAPHP/usr/local/hestia
-		mkdir -p $BUILD_DIR_HESTIAPHP/usr/local/hestia
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_skynetPHP/usr/local/skynet
+		mkdir -p $BUILD_DIR_skynetPHP/usr/local/skynet
 
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: rm -r $BUILD_DIR_HESTIAPHP/usr/local/hestia/php
-		if [ -d $BUILD_DIR_HESTIAPHP/usr/local/hestia/php ]; then
-			rm -r $BUILD_DIR_HESTIAPHP/usr/local/hestia/php
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: rm -r $BUILD_DIR_skynetPHP/usr/local/skynet/php
+		if [ -d $BUILD_DIR_skynetPHP/usr/local/skynet/php ]; then
+			rm -r $BUILD_DIR_skynetPHP/usr/local/skynet/php
 		fi
 
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: mv ${BUILD_DIR}/usr/local/hestia/php ${BUILD_DIR_HESTIAPHP}/usr/local/hestia/
-		mv ${BUILD_DIR}/usr/local/hestia/php ${BUILD_DIR_HESTIAPHP}/usr/local/hestia/
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: mv ${BUILD_DIR}/usr/local/skynet/php ${BUILD_DIR_skynetPHP}/usr/local/skynet/
+		mv ${BUILD_DIR}/usr/local/skynet/php ${BUILD_DIR_skynetPHP}/usr/local/skynet/
 
 		# copy binary
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: cp $BUILD_DIR_HESTIAPHP/usr/local/hestia/php/sbin/php-fpm $BUILD_DIR_HESTIAPHP/usr/local/hestia/php/sbin/hestia-php
-		cp $BUILD_DIR_HESTIAPHP/usr/local/hestia/php/sbin/php-fpm $BUILD_DIR_HESTIAPHP/usr/local/hestia/php/sbin/hestia-php
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: cp $BUILD_DIR_skynetPHP/usr/local/skynet/php/sbin/php-fpm $BUILD_DIR_skynetPHP/usr/local/skynet/php/sbin/skynet-php
+		cp $BUILD_DIR_skynetPHP/usr/local/skynet/php/sbin/php-fpm $BUILD_DIR_skynetPHP/usr/local/skynet/php/sbin/skynet-php
 
 		# Change permissions and build the package
-		chown -R root:root $BUILD_DIR_HESTIAPHP
+		chown -R root:root $BUILD_DIR_skynetPHP
 		# Get Debian package files
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_HESTIAPHP/DEBIAN
-		mkdir -p $BUILD_DIR_HESTIAPHP/DEBIAN
-		get_branch_file 'src/deb/php/control' "$BUILD_DIR_HESTIAPHP/DEBIAN/control"
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_skynetPHP/DEBIAN
+		mkdir -p $BUILD_DIR_skynetPHP/DEBIAN
+		get_branch_file 'src/deb/php/control' "$BUILD_DIR_skynetPHP/DEBIAN/control"
 		if [ "$BUILD_ARCH" != "amd64" ]; then
-			sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_HESTIAPHP/DEBIAN/control"
+			sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_skynetPHP/DEBIAN/control"
 		fi
 
 		os=$(lsb_release -is)
 		release=$(lsb_release -rs)
 		if [[ "$os" = "Ubuntu" ]] && [[ "$release" = "20.04" ]]; then
-			sed -i "/Conflicts: libzip5/d" "$BUILD_DIR_HESTIAPHP/DEBIAN/control"
-			sed -i "s/libzip4/libzip5/g" "$BUILD_DIR_HESTIAPHP/DEBIAN/control"
+			sed -i "/Conflicts: libzip5/d" "$BUILD_DIR_skynetPHP/DEBIAN/control"
+			sed -i "s/libzip4/libzip5/g" "$BUILD_DIR_skynetPHP/DEBIAN/control"
 		fi
 		if [[ "$os" = "Ubuntu" ]] && [[ "$release" = "24.04" ]]; then
-			sed -i "/Conflicts: libzip5/d" "$BUILD_DIR_HESTIAPHP/DEBIAN/control"
-			sed -i "s/libzip4/libzip4t64/g" "$BUILD_DIR_HESTIAPHP/DEBIAN/control"
+			sed -i "/Conflicts: libzip5/d" "$BUILD_DIR_skynetPHP/DEBIAN/control"
+			sed -i "s/libzip4/libzip4t64/g" "$BUILD_DIR_skynetPHP/DEBIAN/control"
 		fi
 
-		get_branch_file 'src/deb/php/copyright' "$BUILD_DIR_HESTIAPHP/DEBIAN/copyright"
-		get_branch_file 'src/deb/php/postinst' "$BUILD_DIR_HESTIAPHP/DEBIAN/postinst"
-		chmod +x $BUILD_DIR_HESTIAPHP/DEBIAN/postinst
+		get_branch_file 'src/deb/php/copyright' "$BUILD_DIR_skynetPHP/DEBIAN/copyright"
+		get_branch_file 'src/deb/php/postinst' "$BUILD_DIR_skynetPHP/DEBIAN/postinst"
+		chmod +x $BUILD_DIR_skynetPHP/DEBIAN/postinst
 		# Get custom config
-		get_branch_file 'src/deb/php/php-fpm.conf' "${BUILD_DIR_HESTIAPHP}/usr/local/hestia/php/etc/php-fpm.conf"
-		get_branch_file 'src/deb/php/php.ini' "${BUILD_DIR_HESTIAPHP}/usr/local/hestia/php/lib/php.ini"
+		get_branch_file 'src/deb/php/php-fpm.conf' "${BUILD_DIR_skynetPHP}/usr/local/skynet/php/etc/php-fpm.conf"
+		get_branch_file 'src/deb/php/php.ini' "${BUILD_DIR_skynetPHP}/usr/local/skynet/php/lib/php.ini"
 
 		# Build the package
 		echo Building PHP DEB
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: dpkg-deb -Zxz --build $BUILD_DIR_HESTIAPHP $DEB_DIR
-		dpkg-deb -Zxz --build $BUILD_DIR_HESTIAPHP $DEB_DIR
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: dpkg-deb -Zxz --build $BUILD_DIR_skynetPHP $DEB_DIR
+		dpkg-deb -Zxz --build $BUILD_DIR_skynetPHP $DEB_DIR
 
 		rm -r $BUILD_DIR/usr
 
 		# clear up the source folder
 		if [ "$KEEPBUILD" != 'true' ]; then
 			rm -r $BUILD_DIR/php-$(echo $PHP_V | cut -d"~" -f1)
-			rm -r $BUILD_DIR_HESTIAPHP
-			if [ "$use_src_folder" == 'true' ] && [ -d $BUILD_DIR/hestiacp-$branch_dash ]; then
-				rm -r $BUILD_DIR/hestiacp-$branch_dash
+			rm -r $BUILD_DIR_skynetPHP
+			if [ "$use_src_folder" == 'true' ] && [ -d $BUILD_DIR/skynetcp-$branch_dash ]; then
+				rm -r $BUILD_DIR/skynetcp-$branch_dash
 			fi
 		fi
 	fi
@@ -624,16 +624,16 @@ if [ "$PHP_B" = true ]; then
 		# Get RHEL package files
 		get_branch_file 'src/rpm/php/php-fpm.conf' "$HOME/rpmbuild/SOURCES/php-fpm.conf"
 		get_branch_file 'src/rpm/php/php.ini' "$HOME/rpmbuild/SOURCES/php.ini"
-		get_branch_file 'src/rpm/php/hestia-php.spec' "$HOME/rpmbuild/SPECS/hestia-php.spec"
-		get_branch_file 'src/rpm/php/hestia-php.service' "$HOME/rpmbuild/SOURCES/hestia-php.service"
+		get_branch_file 'src/rpm/php/skynet-php.spec' "$HOME/rpmbuild/SPECS/skynet-php.spec"
+		get_branch_file 'src/rpm/php/skynet-php.service' "$HOME/rpmbuild/SOURCES/skynet-php.service"
 
 		# Download source files
 		download_file $PHP "$HOME/rpmbuild/SOURCES/"
 
 		# Build RPM package
 		echo Building PHP RPM
-		rpmbuild -bs ~/rpmbuild/SPECS/hestia-php.spec
-		mock -r rocky+epel-9-$(arch) ~/rpmbuild/SRPMS/hestia-php-$PHP_V-1.el9.src.rpm
+		rpmbuild -bs ~/rpmbuild/SPECS/skynet-php.spec
+		mock -r rocky+epel-9-$(arch) ~/rpmbuild/SRPMS/skynet-php-$PHP_V-1.el9.src.rpm
 		cp /var/lib/mock/rocky+epel-9-$(arch)/result/*.rpm $RPM_DIR
 		rm -rf ~/rpmbuild/SPECS/* ~/rpmbuild/SOURCES/* ~/rpmbuild/SRPMS/*
 	fi
@@ -641,68 +641,68 @@ fi
 
 #################################################################################
 #
-# Building hestia-web-terminal
+# Building skynet-web-terminal
 #
 #################################################################################
 
 if [ "$WEB_TERMINAL_B" = true ]; then
 	if [ "$CROSS" = "true" ]; then
-		echo "Cross compile not supported for hestia-nginx, hestia-php or hestia-web-terminal"
+		echo "Cross compile not supported for skynet-nginx, skynet-php or skynet-web-terminal"
 		exit 1
 	fi
 
-	echo "Building hestia-web-terminal package..."
+	echo "Building skynet-web-terminal package..."
 
 	if [ "$BUILD_DEB" = true ]; then
-		BUILD_DIR_HESTIA_TERMINAL=$BUILD_DIR/hestia-web-terminal_$WEB_TERMINAL_V
+		BUILD_DIR_skynet_TERMINAL=$BUILD_DIR/skynet-web-terminal_$WEB_TERMINAL_V
 
 		# Check if target directory exist
-		if [ -d $BUILD_DIR_HESTIA_TERMINAL ]; then
-			rm -r $BUILD_DIR_HESTIA_TERMINAL
+		if [ -d $BUILD_DIR_skynet_TERMINAL ]; then
+			rm -r $BUILD_DIR_skynet_TERMINAL
 		fi
 
 		# Create directory
-		mkdir -p $BUILD_DIR_HESTIA_TERMINAL
-		chown -R root:root $BUILD_DIR_HESTIA_TERMINAL
+		mkdir -p $BUILD_DIR_skynet_TERMINAL
+		chown -R root:root $BUILD_DIR_skynet_TERMINAL
 
 		# Get Debian package files
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_HESTIA_TERMINAL/DEBIAN
-		mkdir -p $BUILD_DIR_HESTIA_TERMINAL/DEBIAN
-		get_branch_file 'src/deb/web-terminal/control' "$BUILD_DIR_HESTIA_TERMINAL/DEBIAN/control"
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_skynet_TERMINAL/DEBIAN
+		mkdir -p $BUILD_DIR_skynet_TERMINAL/DEBIAN
+		get_branch_file 'src/deb/web-terminal/control' "$BUILD_DIR_skynet_TERMINAL/DEBIAN/control"
 		if [ "$BUILD_ARCH" != "amd64" ]; then
-			sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_HESTIA_TERMINAL/DEBIAN/control"
+			sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_skynet_TERMINAL/DEBIAN/control"
 		fi
 
-		get_branch_file 'src/deb/web-terminal/copyright' "$BUILD_DIR_HESTIA_TERMINAL/DEBIAN/copyright"
-		get_branch_file 'src/deb/web-terminal/postinst' "$BUILD_DIR_HESTIA_TERMINAL/DEBIAN/postinst"
-		chmod +x $BUILD_DIR_HESTIA_TERMINAL/DEBIAN/postinst
+		get_branch_file 'src/deb/web-terminal/copyright' "$BUILD_DIR_skynet_TERMINAL/DEBIAN/copyright"
+		get_branch_file 'src/deb/web-terminal/postinst' "$BUILD_DIR_skynet_TERMINAL/DEBIAN/postinst"
+		chmod +x $BUILD_DIR_skynet_TERMINAL/DEBIAN/postinst
 
 		# Get server files
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: mkdir -p "${BUILD_DIR_HESTIA_TERMINAL}/usr/local/hestia/web-terminal"
-		mkdir -p "${BUILD_DIR_HESTIA_TERMINAL}/usr/local/hestia/web-terminal"
-		get_branch_file 'src/deb/web-terminal/package.json' "${BUILD_DIR_HESTIA_TERMINAL}/usr/local/hestia/web-terminal/package.json"
-		get_branch_file 'src/deb/web-terminal/package-lock.json' "${BUILD_DIR_HESTIA_TERMINAL}/usr/local/hestia/web-terminal/package-lock.json"
-		get_branch_file 'src/deb/web-terminal/server.js' "${BUILD_DIR_HESTIA_TERMINAL}/usr/local/hestia/web-terminal/server.js"
-		chmod +x "${BUILD_DIR_HESTIA_TERMINAL}/usr/local/hestia/web-terminal/server.js"
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: mkdir -p "${BUILD_DIR_skynet_TERMINAL}/usr/local/skynet/web-terminal"
+		mkdir -p "${BUILD_DIR_skynet_TERMINAL}/usr/local/skynet/web-terminal"
+		get_branch_file 'src/deb/web-terminal/package.json' "${BUILD_DIR_skynet_TERMINAL}/usr/local/skynet/web-terminal/package.json"
+		get_branch_file 'src/deb/web-terminal/package-lock.json' "${BUILD_DIR_skynet_TERMINAL}/usr/local/skynet/web-terminal/package-lock.json"
+		get_branch_file 'src/deb/web-terminal/server.js' "${BUILD_DIR_skynet_TERMINAL}/usr/local/skynet/web-terminal/server.js"
+		chmod +x "${BUILD_DIR_skynet_TERMINAL}/usr/local/skynet/web-terminal/server.js"
 
-		cd $BUILD_DIR_HESTIA_TERMINAL/usr/local/hestia/web-terminal
+		cd $BUILD_DIR_skynet_TERMINAL/usr/local/skynet/web-terminal
 		npm ci --omit=dev
 
 		# Systemd service
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_HESTIA_TERMINAL/etc/systemd/system
-		mkdir -p $BUILD_DIR_HESTIA_TERMINAL/etc/systemd/system
-		get_branch_file 'src/deb/web-terminal/hestia-web-terminal.service' "$BUILD_DIR_HESTIA_TERMINAL/etc/systemd/system/hestia-web-terminal.service"
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: mkdir -p $BUILD_DIR_skynet_TERMINAL/etc/systemd/system
+		mkdir -p $BUILD_DIR_skynet_TERMINAL/etc/systemd/system
+		get_branch_file 'src/deb/web-terminal/skynet-web-terminal.service' "$BUILD_DIR_skynet_TERMINAL/etc/systemd/system/skynet-web-terminal.service"
 
 		# Build the package
 		echo Building Web Terminal DEB
-		[ "$HESTIA_DEBUG" ] && echo DEBUG: dpkg-deb -Zxz --build $BUILD_DIR_HESTIA_TERMINAL $DEB_DIR
-		dpkg-deb -Zxz --build $BUILD_DIR_HESTIA_TERMINAL $DEB_DIR
+		[ "$SKYNET_DEBUG" ] && echo DEBUG: dpkg-deb -Zxz --build $BUILD_DIR_skynet_TERMINAL $DEB_DIR
+		dpkg-deb -Zxz --build $BUILD_DIR_skynet_TERMINAL $DEB_DIR
 
 		# clear up the source folder
 		if [ "$KEEPBUILD" != 'true' ]; then
-			rm -r $BUILD_DIR_HESTIA_TERMINAL
-			if [ "$use_src_folder" == 'true' ] && [ -d $BUILD_DIR/hestiacp-$branch_dash ]; then
-				rm -r $BUILD_DIR/hestiacp-$branch_dash
+			rm -r $BUILD_DIR_skynet_TERMINAL
+			if [ "$use_src_folder" == 'true' ] && [ -d $BUILD_DIR/skynetcp-$branch_dash ]; then
+				rm -r $BUILD_DIR/skynetcp-$branch_dash
 			fi
 		fi
 	fi
@@ -710,84 +710,84 @@ fi
 
 #################################################################################
 #
-# Building hestia
+# Building skynet
 #
 #################################################################################
 
 arch="$BUILD_ARCH"
 
-if [ "$HESTIA_B" = true ]; then
+if [ "$SKYNET_B" = true ]; then
 	if [ "$CROSS" = "true" ]; then
 		arch="amd64 arm64"
 	fi
 	for BUILD_ARCH in $arch; do
-		echo "Building Hestia Control Panel package..."
+		echo "Building skynet Control Panel package..."
 
 		if [ "$BUILD_DEB" = true ]; then
-			BUILD_DIR_HESTIA=$BUILD_DIR/hestia_$HESTIA_V
+			BUILD_DIR_skynet=$BUILD_DIR/skynet_$SKYNET_V
 
 			# Change to build directory
 			cd $BUILD_DIR
 
-			if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_HESTIA" ]; then
+			if [ "$KEEPBUILD" != 'true' ] || [ ! -d "$BUILD_DIR_skynet" ]; then
 				# Check if target directory exist
-				if [ -d $BUILD_DIR_HESTIA ]; then
-					rm -r $BUILD_DIR_HESTIA
+				if [ -d $BUILD_DIR_skynet ]; then
+					rm -r $BUILD_DIR_skynet
 				fi
 
 				# Create directory
-				mkdir -p $BUILD_DIR_HESTIA
+				mkdir -p $BUILD_DIR_skynet
 			fi
 
 			cd $BUILD_DIR
-			rm -rf $BUILD_DIR/hestiacp-$branch_dash
+			rm -rf $BUILD_DIR/skynetcp-$branch_dash
 			# Download and unpack source files
 			if [ "$use_src_folder" == 'true' ]; then
-				[ "$HESTIA_DEBUG" ] && echo DEBUG: cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
-				cp -rf "$SRC_DIR/" $BUILD_DIR/hestiacp-$branch_dash
+				[ "$SKYNET_DEBUG" ] && echo DEBUG: cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
+				cp -rf "$SRC_DIR/" $BUILD_DIR/skynetcp-$branch_dash
 			elif [ -d $SRC_DIR ]; then
-				download_file $HESTIA_ARCHIVE_LINK '-' 'fresh' | tar xz
+				download_file $SKYNET_ARCHIVE_LINK '-' 'fresh' | tar xz
 			fi
 
-			mkdir -p $BUILD_DIR_HESTIA/usr/local/hestia
+			mkdir -p $BUILD_DIR_skynet/usr/local/skynet
 
 			# Build web and move needed directories
-			cd $BUILD_DIR/hestiacp-$branch_dash
+			cd $BUILD_DIR/skynetcp-$branch_dash
 			npm ci --ignore-scripts
 			npm run build
-			cp -rf bin func install web $BUILD_DIR_HESTIA/usr/local/hestia/
+			cp -rf bin func install web $BUILD_DIR_skynet/usr/local/skynet/
 
 			# Set permissions
-			find $BUILD_DIR_HESTIA/usr/local/hestia/ -type f -exec chmod -x {} \;
+			find $BUILD_DIR_skynet/usr/local/skynet/ -type f -exec chmod -x {} \;
 
-			# Allow send email via /usr/local/hestia/web/inc/mail-wrapper.php via cli
-			chmod +x $BUILD_DIR_HESTIA/usr/local/hestia/web/inc/mail-wrapper.php
+			# Allow send email via /usr/local/skynet/web/inc/mail-wrapper.php via cli
+			chmod +x $BUILD_DIR_skynet/usr/local/skynet/web/inc/mail-wrapper.php
 			# Allow the executable to be executed
-			chmod +x $BUILD_DIR_HESTIA/usr/local/hestia/bin/*
-			find $BUILD_DIR_HESTIA/usr/local/hestia/install/ \( -name '*.sh' \) -exec chmod +x {} \;
-			chmod -x $BUILD_DIR_HESTIA/usr/local/hestia/install/*.sh
-			chown -R root:root $BUILD_DIR_HESTIA
+			chmod +x $BUILD_DIR_skynet/usr/local/skynet/bin/*
+			find $BUILD_DIR_skynet/usr/local/skynet/install/ \( -name '*.sh' \) -exec chmod +x {} \;
+			chmod -x $BUILD_DIR_skynet/usr/local/skynet/install/*.sh
+			chown -R root:root $BUILD_DIR_skynet
 			# Get Debian package files
-			mkdir -p $BUILD_DIR_HESTIA/DEBIAN
-			get_branch_file 'src/deb/hestia/control' "$BUILD_DIR_HESTIA/DEBIAN/control"
+			mkdir -p $BUILD_DIR_skynet/DEBIAN
+			get_branch_file 'src/deb/skynet/control' "$BUILD_DIR_skynet/DEBIAN/control"
 			if [ "$BUILD_ARCH" != "amd64" ]; then
-				sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_HESTIA/DEBIAN/control"
+				sed -i "s/amd64/${BUILD_ARCH}/g" "$BUILD_DIR_skynet/DEBIAN/control"
 			fi
-			get_branch_file 'src/deb/hestia/copyright' "$BUILD_DIR_HESTIA/DEBIAN/copyright"
-			get_branch_file 'src/deb/hestia/preinst' "$BUILD_DIR_HESTIA/DEBIAN/preinst"
-			get_branch_file 'src/deb/hestia/postinst' "$BUILD_DIR_HESTIA/DEBIAN/postinst"
-			chmod +x $BUILD_DIR_HESTIA/DEBIAN/postinst
-			chmod +x $BUILD_DIR_HESTIA/DEBIAN/preinst
+			get_branch_file 'src/deb/skynet/copyright' "$BUILD_DIR_skynet/DEBIAN/copyright"
+			get_branch_file 'src/deb/skynet/preinst' "$BUILD_DIR_skynet/DEBIAN/preinst"
+			get_branch_file 'src/deb/skynet/postinst' "$BUILD_DIR_skynet/DEBIAN/postinst"
+			chmod +x $BUILD_DIR_skynet/DEBIAN/postinst
+			chmod +x $BUILD_DIR_skynet/DEBIAN/preinst
 
-			echo Building Hestia DEB
-			dpkg-deb -Zxz --build $BUILD_DIR_HESTIA $DEB_DIR
+			echo Building skynet DEB
+			dpkg-deb -Zxz --build $BUILD_DIR_skynet $DEB_DIR
 
 			# clear up the source folder
 			if [ "$KEEPBUILD" != 'true' ]; then
-				rm -r $BUILD_DIR_HESTIA
-				rm -rf hestiacp-$branch_dash
+				rm -r $BUILD_DIR_skynet
+				rm -rf skynetcp-$branch_dash
 			fi
-			cd $BUILD_DIR/hestiacp-$branch_dash
+			cd $BUILD_DIR/skynetcp-$branch_dash
 		fi
 
 		if [ "$BUILD_RPM" = true ]; then
@@ -795,16 +795,16 @@ if [ "$HESTIA_B" = true ]; then
 			rm -rf ~/rpmbuild/SOURCES/*
 
 			# Get RHEL package files
-			get_branch_file 'src/rpm/hestia/hestia.spec' "$HOME/rpmbuild/SPECS/hestia.spec"
-			get_branch_file 'src/rpm/hestia/hestia.service' "$HOME/rpmbuild/SOURCES/hestia.service"
+			get_branch_file 'src/rpm/skynet/skynet.spec' "$HOME/rpmbuild/SPECS/skynet.spec"
+			get_branch_file 'src/rpm/skynet/skynet.service' "$HOME/rpmbuild/SOURCES/skynet.service"
 
 			# Generate source tar.gz
-			tar -czf $HOME/rpmbuild/SOURCES/hestia-$BUILD_VER.tar.gz -C $SRC_DIR/.. hestiacp
+			tar -czf $HOME/rpmbuild/SOURCES/skynet-$BUILD_VER.tar.gz -C $SRC_DIR/.. skynetcp
 
 			# Build RPM package
-			echo Building Hestia RPM
-			rpmbuild -bs ~/rpmbuild/SPECS/hestia.spec
-			mock -r rocky+epel-9-$(arch) ~/rpmbuild/SRPMS/hestia-$BUILD_VER-1.el9.src.rpm
+			echo Building skynet RPM
+			rpmbuild -bs ~/rpmbuild/SPECS/skynet.spec
+			mock -r rocky+epel-9-$(arch) ~/rpmbuild/SRPMS/skynet-$BUILD_VER-1.el9.src.rpm
 			cp /var/lib/mock/rocky+epel-9-$(arch)/result/*.rpm $RPM_DIR
 			rm -rf ~/rpmbuild/SPECS/* ~/rpmbuild/SOURCES/* ~/rpmbuild/SRPMS/*
 		fi

@@ -1,9 +1,9 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Drupal;
+namespace Skynet\WebApp\Installers\Drupal;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 class DrupalSetup extends BaseSetup {
 	protected $appname = "drupal";

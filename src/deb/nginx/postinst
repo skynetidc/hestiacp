@@ -7,16 +7,16 @@ if [ "$1" != "configure" ]; then
 fi
 
 # Touch and set permisions on default log files on installation
-update-rc.d hestia defaults > /dev/null
-invoke-rc.d hestia start || true
+update-rc.d skynet defaults > /dev/null
+invoke-rc.d skynet start || true
 
-# Adapt Port Listing in HESTIA NGINX Backend
-source /usr/local/hestia/func/syshealth.sh # Load syshealth functions
-syshealth_adapt_hestia_nginx_listen_ports  # Adapt port listing
+# Adapt Port Listing in skynet NGINX Backend
+source /usr/local/skynet/func/syshealth.sh # Load syshealth functions
+syshealth_adapt_skynet_nginx_listen_ports  # Adapt port listing
 syshealth_adapt_nginx_resolver
 
 # Run triggers only on updates
-if [ ! -e "/usr/local/hestia/data/users/" ]; then
+if [ ! -e "/usr/local/skynet/data/users/" ]; then
 	exit
 fi
 
@@ -24,33 +24,33 @@ fi
 #                Initialize functions/variables               #
 ###############################################################
 
-if [ -z "$HESTIA" ]; then
-	export HESTIA='/usr/local/hestia'
-	PATH=$PATH:/usr/local/hestia/bin
+if [ -z "$SKYNET" ]; then
+	export skynet='/usr/local/skynet'
+	PATH=$PATH:/usr/local/skynet/bin
 	export PATH
 fi
 
 # Check if preinstall hook exists
-if [ -e "/etc/hestiacp/hooks/nginx/pre_install.sh" ]; then
-	/etc/hestiacp/hooks/nginx/pre_install.sh
+if [ -e "/etc/skynetcp/hooks/nginx/pre_install.sh" ]; then
+	/etc/skynetcp/hooks/nginx/pre_install.sh
 fi
 
 # Load upgrade functions and variables
-source /usr/local/hestia/func/main.sh
-source /usr/local/hestia/func/upgrade.sh
-source /usr/local/hestia/conf/hestia.conf
-source /usr/local/hestia/install/upgrade/upgrade.conf
+source /usr/local/skynet/func/main.sh
+source /usr/local/skynet/func/upgrade.sh
+source /usr/local/skynet/conf/skynet.conf
+source /usr/local/skynet/install/upgrade/upgrade.conf
 
 # Reset backend port
 if [ -n "$BACKEND_PORT" ]; then
-	/usr/local/hestia/bin/v-change-sys-port $BACKEND_PORT
+	/usr/local/skynet/bin/v-change-sys-port $BACKEND_PORT
 fi
 
-if [ -e "/etc/hestiacp/hooks/nginx/post_install.sh" ]; then
-	/etc/hestiacp/hooks/nginx/post_install.sh
+if [ -e "/etc/skynetcp/hooks/nginx/post_install.sh" ]; then
+	/etc/skynetcp/hooks/nginx/post_install.sh
 fi
 
-# Restart hestia service
-if [ -f "/etc/init.d/hestia" ]; then
-	systemctl restart hestia > /dev/null 2>&1
+# Restart skynet service
+if [ -f "/etc/init.d/skynet" ]; then
+	systemctl restart skynet > /dev/null 2>&1
 fi

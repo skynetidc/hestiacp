@@ -1,5 +1,5 @@
 <?php
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 ob_start();
 include $_SERVER["DOCUMENT_ROOT"] . "/inc/main.php";
@@ -30,7 +30,7 @@ switch ($action) {
 
 foreach ($backup as $value) {
 	$value = quoteshellarg($value);
-	exec(HESTIA_CMD . $cmd . " " . $user . " " . $value, $output, $return_var);
+	exec(SKYNET_CMD . $cmd . " " . $user . " " . $value, $output, $return_var);
 }
 
 header("Location: /list/backup/");

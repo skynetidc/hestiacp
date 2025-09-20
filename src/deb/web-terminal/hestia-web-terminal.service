@@ -1,14 +1,14 @@
 [Unit]
-Description=HestiaCP Web Terminal
-Documentation=https://hestiacp.com/docs/
+Description=skynetcp Web Terminal
+Documentation=https://skynetcp.com/docs/
 After=network.target
 
 [Service]
 User=root
-Group=hestia-users
+Group=skynet-users
 Environment=NODE_ENV=production
-Environment=HESTIA=/usr/local/hestia
-ExecStart=/usr/local/hestia/web-terminal/server.js
+Environment=skynet=/usr/local/skynet
+ExecStart=/usr/local/skynet/web-terminal/server.js
 ExecStop=/bin/kill -s TERM $MAINPID
 Restart=on-failure
 

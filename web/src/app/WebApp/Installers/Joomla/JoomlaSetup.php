@@ -1,10 +1,10 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Joomla;
+namespace Skynet\WebApp\Installers\Joomla;
 
-use Hestia\System\Util;
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use Skynet\System\Util;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 class JoomlaSetup extends BaseSetup {
 	protected $appInfo = [

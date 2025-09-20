@@ -1,8 +1,8 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Dolibarr;
+namespace Skynet\WebApp\Installers\Dolibarr;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
 
 class DolibarrSetup extends BaseSetup {
 	protected $appInfo = [

@@ -1,9 +1,9 @@
 <?php
-namespace Hestia\WebApp\Installers\Flarum;
+namespace Skynet\WebApp\Installers\Flarum;
 
-use Hestia\System\Util;
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+use Skynet\System\Util;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
+use function skynetcp\quoteshellarg\quoteshellarg;
 
 class FlarumSetup extends BaseSetup {
 	protected $appInfo = [
@@ -38,7 +38,7 @@ class FlarumSetup extends BaseSetup {
 		],
 	];
 
-	// Our updateFile routine done the 'Hestia way'
+	// Our updateFile routine done the 'skynet way'
 	public function updateFile($file, $search, $replace) {
 		$result = null;
 		$this->appcontext->runUser("v-open-fs-file", [$file], $result);

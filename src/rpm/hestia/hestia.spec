@@ -1,75 +1,75 @@
 %define debug_package %{nil}
 %global _hardened_build 1
 
-Name:           hestia
+Name:           skynet
 Version:        1.9.0~alpha
 Release:        1%{dist}
-Summary:        Hestia Control Panel
+Summary:        skynet Control Panel
 Group:          System Environment/Base
 License:        GPLv3
-URL:            https://www.hestiacp.com
-Source0:        hestia-%{version}.tar.gz
-Source1:        hestia.service
-Vendor:         hestiacp.com
+URL:            https://www.skynetcp.com
+Source0:        skynet-%{version}.tar.gz
+Source1:        skynet.service
+Vendor:         skynetcp.com
 Requires:       redhat-release >= 8
 Requires:       bash, chkconfig, gawk, sed, acl, sysstat, (setpriv or util-linux), zstd, jq, jailkit, bubblewrap
 Conflicts:      vesta
-Provides:       hestia = %{version}
+Provides:       skynet = %{version}
 BuildRequires:  systemd
 
 %description
-This package contains the Hestia Control Panel.
+This package contains the skynet Control Panel.
 
 %prep
-%autosetup -p1 -n hestiacp
+%autosetup -p1 -n skynetcp
 
 %build
 
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
-mkdir -p %{buildroot}%{_unitdir} %{buildroot}/usr/local/hestia
-cp -R %{_builddir}/hestiacp/* %{buildroot}/usr/local/hestia/
-%{__install} -m644 %{SOURCE1} %{buildroot}%{_unitdir}/hestia.service
+mkdir -p %{buildroot}%{_unitdir} %{buildroot}/usr/local/skynet
+cp -R %{_builddir}/skynetcp/* %{buildroot}/usr/local/skynet/
+%{__install} -m644 %{SOURCE1} %{buildroot}%{_unitdir}/skynet.service
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %pre
 # Run triggers only on updates
-if [ -e "/usr/local/hestia/data/users/" ]; then
+if [ -e "/usr/local/skynet/data/users/" ]; then
     # Validate version number and replace if different
-    HESTIA_V=$(rpm --queryformat="%{VERSION}" -q hestia)
-    if [ ! "$HESTIA_V" = "%{version}" ]; then
-        sed -i "s/VERSION=.*/VERSION='$HESTIA_V'/g" /usr/local/hestia/conf/hestia.conf
+    skynet_V=$(rpm --queryformat="%{VERSION}" -q skynet)
+    if [ ! "$SKYNET_V" = "%{version}" ]; then
+        sed -i "s/VERSION=.*/VERSION='$SKYNET_V'/g" /usr/local/skynet/conf/skynet.conf
     fi
 fi
 
 %post
-%systemd_post hestia.service
+%systemd_post skynet.service
 
-if [ ! -e /etc/profile.d/hestia.sh ]; then
-    HESTIA='/usr/local/hestia'
-    echo "export HESTIA='$HESTIA'" > /etc/profile.d/hestia.sh
-    echo 'PATH=$PATH:'$HESTIA'/bin' >> /etc/profile.d/hestia.sh
-    echo 'export PATH' >> /etc/profile.d/hestia.sh
-    chmod 755 /etc/profile.d/hestia.sh
-    source /etc/profile.d/hestia.sh
+if [ ! -e /etc/profile.d/skynet.sh ]; then
+    skynet='/usr/local/skynet'
+    echo "export skynet='$SKYNET'" > /etc/profile.d/skynet.sh
+    echo 'PATH=$PATH:'$SKYNET'/bin' >> /etc/profile.d/skynet.sh
+    echo 'export PATH' >> /etc/profile.d/skynet.sh
+    chmod 755 /etc/profile.d/skynet.sh
+    source /etc/profile.d/skynet.sh
 fi
 
-if [ -e "/usr/local/hestia/data/users/" ]; then
+if [ -e "/usr/local/skynet/data/users/" ]; then
     ###############################################################
     #                Initialize functions/variables               #
     ###############################################################
 
     # Load upgrade functions and refresh variables/configuration
-    source /usr/local/hestia/func/upgrade.sh
+    source /usr/local/skynet/func/upgrade.sh
     upgrade_refresh_config
 
     ###############################################################
     #             Set new version numbers for packages            #
     ###############################################################
-    # Hestia Control Panel
-    new_version=$(rpm --queryformat="%{VERSION}" -q hestia)
+    # skynet Control Panel
+    new_version=$(rpm --queryformat="%{VERSION}" -q skynet)
 
     # phpMyAdmin
     pma_v='5.0.2'
@@ -123,7 +123,7 @@ if [ -e "/usr/local/hestia/data/users/" ]; then
 	# update whitelabel logo's
 	update_whitelabel_logo | tee -a $LOG
 
-    # Set new version number in hestia.conf
+    # Set new version number in skynet.conf
     upgrade_set_version
 
     # Perform account and domain rebuild to ensure configuration files are correct
@@ -137,19 +137,19 @@ if [ -e "/usr/local/hestia/data/users/" ]; then
 fi
 
 %preun
-%systemd_preun hestia.service
+%systemd_preun skynet.service
 
 %postun
-%systemd_postun_with_restart hestia.service
+%systemd_postun_with_restart skynet.service
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) /usr/local/hestia
-%{_unitdir}/hestia.service
+%attr(755,root,root) /usr/local/skynet
+%{_unitdir}/skynet.service
 
 %changelog
 * Sun May 14 2023 Istiak Ferdous <hello@istiak.com> - 1.8.0-1
-- HestiaCP RHEL 9 support
+- skynetcp RHEL 9 support
 
 * Thu Jun 25 2020 Ernesto Nicolás Carrea <equistango@gmail.com> - 1.2.0
-- HestiaCP CentOS 8 support
+- skynetcp CentOS 8 support

@@ -1,23 +1,23 @@
 <?php
 
 /**
- * Hestia Control Panel Password Driver
+ * skynet Control Panel Password Driver
  *
  * @version 1.0
- * @author HestiaCP <info@hestiacp.com>
+ * @author skynetcp <info@skynetcp.com>
  */
-class rcube_hestia_password {
+class rcube_skynet_password {
 	public function save($curpass, $passwd) {
 		$rcmail = rcmail::get_instance();
-		$hestia_host = $rcmail->config->get("password_hestia_host");
+		$SKYNET_host = $rcmail->config->get("password_skynet_host");
 
-		if (empty($hestia_host)) {
-			$hestia_host = "localhost";
+		if (empty($SKYNET_host)) {
+			$SKYNET_host = "localhost";
 		}
 
-		$hestia_port = $rcmail->config->get("password_hestia_port");
-		if (empty($hestia_port)) {
-			$hestia_port = "8083";
+		$SKYNET_port = $rcmail->config->get("password_skynet_port");
+		if (empty($SKYNET_port)) {
+			$SKYNET_port = "8083";
 		}
 
 		$postvars = [
@@ -25,7 +25,7 @@ class rcube_hestia_password {
 			"password" => $curpass,
 			"new" => $passwd,
 		];
-		$url = "https://{$hestia_host}:{$hestia_port}/reset/mail/";
+		$url = "https://{$SKYNET_host}:{$SKYNET_port}/reset/mail/";
 		$ch = curl_init();
 		if (
 			false ===
@@ -35,7 +35,7 @@ class rcube_hestia_password {
 				CURLOPT_HEADER => true,
 				CURLOPT_POST => true,
 				CURLOPT_POSTFIELDS => http_build_query($postvars),
-				CURLOPT_USERAGENT => "Hestia Control Panel Password Driver",
+				CURLOPT_USERAGENT => "skynet Control Panel Password Driver",
 				CURLOPT_SSL_VERIFYPEER => false,
 				CURLOPT_SSL_VERIFYHOST => false,
 			])

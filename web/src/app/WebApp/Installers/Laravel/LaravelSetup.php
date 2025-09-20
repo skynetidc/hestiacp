@@ -1,8 +1,8 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Laravel;
+namespace Skynet\WebApp\Installers\Laravel;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
 
 class LaravelSetup extends BaseSetup {
 	protected $appname = "laravel";

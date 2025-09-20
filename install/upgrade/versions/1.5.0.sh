@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Hestia Control Panel upgrade script for target version 1.5.0
+# skynet Control Panel upgrade script for target version 1.5.0
 
 #######################################################################################
 #######                      Place additional commands below.                   #######
@@ -26,7 +26,7 @@ if [ -n "$DB_PMA_ALIAS" ]; then
 		rm /etc/apache2/conf.d/phpmyadmin.conf
 		touch /etc/apache2/conf.d/phpmyadmin.inc
 	fi
-	$HESTIA/bin/v-change-sys-db-alias 'pma' "$DB_PMA_ALIAS"
+	$SKYNET/bin/v-change-sys-db-alias 'pma' "$DB_PMA_ALIAS"
 fi
 
 if [ -n "$DB_PGA_ALIAS" ]; then
@@ -34,7 +34,7 @@ if [ -n "$DB_PGA_ALIAS" ]; then
 		rm /etc/apache2/conf.d/phppgadmin.conf
 		touch /etc/apache2/conf.d/phppgadmin.inc
 	fi
-	$HESTIA/bin/v-change-sys-db-alias 'pga' "$DB_PGA_ALIAS"
+	$SKYNET/bin/v-change-sys-db-alias 'pga' "$DB_PGA_ALIAS"
 
 fi
 
@@ -56,18 +56,18 @@ if [ -n "$MAIL_SYSTEM" ]; then
 
 	# Clean up legacy ip variable
 	for ip in $($BIN/v-list-sys-ips plain | cut -f1); do
-		sed '/^HELO/d' $HESTIA/data/ips/$ip > /dev/null
+		sed '/^HELO/d' $SKYNET/data/ips/$ip > /dev/null
 	done
 fi
 
-if [ -L "/var/log/hestia" ]; then
-	echo "[ ! ] Updating log file location: /usr/local/hestia/log/* to /var/log/hestia/..."
-	rm /var/log/hestia
-	mkdir -p /var/log/hestia
-	cp /usr/local/hestia/log/* /var/log/hestia/
-	rm -rf /usr/local/hestia/log
-	ln -s /var/log/hestia /usr/local/hestia/log
-	touch /var/log/hestia/auth.log /var/log/hestia/error.log /var/log/hestia/system.log /var/log/hestia/nginx-error.log /var/log/hestia/nginx-access.log
+if [ -L "/var/log/skynet" ]; then
+	echo "[ ! ] Updating log file location: /usr/local/skynet/log/* to /var/log/skynet/..."
+	rm /var/log/skynet
+	mkdir -p /var/log/skynet
+	cp /usr/local/skynet/log/* /var/log/skynet/
+	rm -rf /usr/local/skynet/log
+	ln -s /var/log/skynet /usr/local/skynet/log
+	touch /var/log/skynet/auth.log /var/log/skynet/error.log /var/log/skynet/system.log /var/log/skynet/nginx-error.log /var/log/skynet/nginx-access.log
 fi
 
 if [ -d "/var/log/roundcube" ]; then

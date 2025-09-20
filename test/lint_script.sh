@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Includes
-# shellcheck source=/usr/local/hestia/conf/hestia.conf
-source $HESTIA/conf/hestia.conf
+# shellcheck source=/usr/local/skynet/conf/skynet.conf
+source $SKYNET/conf/skynet.conf
 
 # Variables and arguments
-HESTIA="/usr/local/hestia"
+skynet="/usr/local/skynet"
 script=$1
 log=$2
 scroll=$3

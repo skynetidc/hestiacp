@@ -1,8 +1,8 @@
 <?php
 
-namespace Hestia\WebApp\Installers\Vvveb;
+namespace Skynet\WebApp\Installers\Vvveb;
 
-use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
+use Skynet\WebApp\Installers\BaseSetup as BaseSetup;
 
 class VvvebSetup extends BaseSetup {
 	protected $appInfo = [

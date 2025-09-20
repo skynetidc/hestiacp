@@ -15,12 +15,12 @@ user=$1
 format=${2-shell}
 
 # Includes
-# shellcheck source=/etc/hestiacp/hestia.conf
-source /etc/hestiacp/hestia.conf
-# shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+# shellcheck source=/etc/skynetcp/skynet.conf
+source /etc/skynetcp/skynet.conf
+# shellcheck source=/usr/local/skynet/func/main.sh
+source $SKYNET/func/main.sh
 # load config file
-source_conf "$HESTIA/conf/hestia.conf"
+source_conf "$SKYNET/conf/skynet.conf"
 # JSON list function
 json_list() {
 	echo '{
@@ -178,9 +178,9 @@ is_object_valid 'user' 'USER' "$user"
 # Defining config
 USER=$user
 HOME=$HOMEDIR/$user
-source_conf "$HESTIA/data/users/$user/user.conf"
-U_USERS=$(cat "$HESTIA/data/users/$ROOT_USER/user.conf" | grep "U_USERS" | cut -d'=' -f2 | sed "s/'//g")
-SUSPENDED_USERS=$(cat "$HESTIA/data/users/$ROOT_USER/user.conf" | grep "SUSPENDED_USERS" | cut -d'=' -f2 | sed "s/'//g")
+source_conf "$SKYNET/data/users/$user/user.conf"
+U_USERS=$(cat "$SKYNET/data/users/$ROOT_USER/user.conf" | grep "U_USERS" | cut -d'=' -f2 | sed "s/'//g")
+SUSPENDED_USERS=$(cat "$SKYNET/data/users/$ROOT_USER/user.conf" | grep "SUSPENDED_USERS" | cut -d'=' -f2 | sed "s/'//g")
 
 # Listing data
 case $format in
@@ -191,7 +191,7 @@ case $format in
 esac
 
 #----------------------------------------------------------#
-#                       Hestia                             #
+#                       Skynet                             #
 #----------------------------------------------------------#
 
 exit

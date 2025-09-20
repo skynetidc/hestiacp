@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Hestia Control Panel upgrade script for target version 1.7.5
+# skynet Control Panel upgrade script for target version 1.7.5
 
 #######################################################################################
 #######                      Place additional commands below.                   #######
